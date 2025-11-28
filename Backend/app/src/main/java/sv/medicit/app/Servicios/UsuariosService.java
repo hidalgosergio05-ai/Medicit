@@ -7,16 +7,18 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import sv.medicit.app.Entidades.Usuarios;
+import sv.medicit.app.DTOs.UsuarioCreacionDTO;
 import sv.medicit.app.Entidades.Contrasenias;
-import sv.medicit.app.Entidades.Telefonos;
 import sv.medicit.app.Entidades.Correos;
+import sv.medicit.app.Entidades.Especialidades;
 import sv.medicit.app.Entidades.Preguntas;
 import sv.medicit.app.Entidades.Respuestas;
-import sv.medicit.app.Repositorios.UsuariosRepository;
-import sv.medicit.app.Repositorios.RolesRepository;
+import sv.medicit.app.Entidades.Telefonos;
+import sv.medicit.app.Entidades.Usuarios;
+import sv.medicit.app.Repositorios.EspecialidadesRepository;
 import sv.medicit.app.Repositorios.EstadosRepository;
-import sv.medicit.app.DTOs.UsuarioCreacionDTO;
+import sv.medicit.app.Repositorios.RolesRepository;
+import sv.medicit.app.Repositorios.UsuariosRepository;
 
 /**
  * Servicio para la lógica de negocio de Usuarios.
@@ -33,6 +35,9 @@ public class UsuariosService {
 
     @Autowired
     private EstadosRepository estadosRepository;
+
+    @Autowired
+    private EspecialidadesRepository especialidadesRepository;
 
     @Autowired
     private ContraseniasService contraseniasService;
@@ -173,8 +178,69 @@ public class UsuariosService {
                 throw new RuntimeException("Error al crear preguntas y respuestas: " + e.getMessage());
             }
         }
+
+        // Asignar especialidades si fueron incluidas en el DTO
+        if (usuarioDTO.getIdEspecialidades() != null && !usuarioDTO.getIdEspecialidades().isEmpty()) {
+            asignarEspecialidadesAUsuario(usuarioGuardado.getIdUsuario(), usuarioDTO.getIdEspecialidades());
+        }
         
         return usuarioGuardado;
+    }
+
+    /**
+     * Asignar una o varias especialidades a un usuario (medico).
+     * Recibe una lista de ids de especialidades y las asocia al usuario.
+     */
+    public Usuarios asignarEspecialidadesAUsuario(Integer idUsuario, List<Integer> idsEspecialidades) {
+        Usuarios usuario = usuariosRepository.findById(idUsuario)
+            .orElseThrow(() -> new RuntimeException("Usuario no encontrado con ID: " + idUsuario));
+
+        // Opcional: verificar que el usuario sea médico (asumimos que el nombre del rol esté en el campo "estado")
+        if (usuario.getRol() == null || usuario.getRol().getEstado() == null ||
+            !usuario.getRol().getEstado().equalsIgnoreCase("medico")) {
+            throw new RuntimeException("El usuario no es médico y no puede tener especialidades");
+        }
+
+        List<Especialidades> especialidadesEncontradas = especialidadesRepository.findAllById(idsEspecialidades);
+        if (especialidadesEncontradas.size() != idsEspecialidades.size()) {
+            throw new RuntimeException("Alguna(s) especialidad(es) no fue encontrada");
+        }
+
+        if (usuario.getEspecialidades() == null) {
+            usuario.setEspecialidades(especialidadesEncontradas);
+        } else {
+            // Agregar nuevas sin duplicar
+            for (Especialidades e : especialidadesEncontradas) {
+                if (!usuario.getEspecialidades().contains(e)) {
+                    usuario.getEspecialidades().add(e);
+                }
+            }
+        }
+
+        return usuariosRepository.save(usuario);
+    }
+
+    /**
+     * Asignar una sola especialidad a un usuario.
+     */
+    public Usuarios asignarEspecialidadAUsuario(Integer idUsuario, Integer idEspecialidad) {
+        return asignarEspecialidadesAUsuario(idUsuario, java.util.List.of(idEspecialidad));
+    }
+
+    /**
+     * Eliminar una especialidad de un usuario.
+     */
+    public Usuarios removerEspecialidadDeUsuario(Integer idUsuario, Integer idEspecialidad) {
+        Usuarios usuario = usuariosRepository.findById(idUsuario)
+            .orElseThrow(() -> new RuntimeException("Usuario no encontrado con ID: " + idUsuario));
+
+        if (usuario.getEspecialidades() == null || usuario.getEspecialidades().isEmpty()) {
+            throw new RuntimeException("El usuario no tiene especialidades asignadas");
+        }
+
+        usuario.getEspecialidades().removeIf(e -> e.getIdEspecialidad().equals(idEspecialidad));
+
+        return usuariosRepository.save(usuario);
     }
 
     /**

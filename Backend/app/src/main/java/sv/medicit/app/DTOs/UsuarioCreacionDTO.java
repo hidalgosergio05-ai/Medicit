@@ -17,6 +17,7 @@ public class UsuarioCreacionDTO {
     private Date fechaNacimiento;
     private Integer idRol;
     private Integer idEstado;
+    private List<Integer> idEspecialidades;
     
     // Datos de Contraseña
     private String contrasenia;
@@ -85,6 +86,14 @@ public class UsuarioCreacionDTO {
     
     public void setIdEstado(Integer idEstado) {
         this.idEstado = idEstado;
+    }
+
+    public List<Integer> getIdEspecialidades() {
+        return idEspecialidades;
+    }
+
+    public void setIdEspecialidades(List<Integer> idEspecialidades) {
+        this.idEspecialidades = idEspecialidades;
     }
     
     public String getContrasenia() {
