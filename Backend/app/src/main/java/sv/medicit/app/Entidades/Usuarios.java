@@ -35,7 +35,7 @@ public class Usuarios {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_usuario")
-    private Long idUsuario;
+    private int idUsuario;
 
     @Column(name = "nombre_usuario", length = 15, nullable = false)
     private String nombreUsuario;
@@ -53,9 +53,10 @@ public class Usuarios {
     @Column(name = "fecha_nacimiento", nullable = false)
     private Date fechaNacimiento;
 
-    // Foreign keys  se pueden mapear como relaciones @ManyToOne
-    @Column(name = "rol_id", nullable = false)
-    private Integer rolId;
+     
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_rol", referencedColumnName = "id_rol", nullable = false)
+    private Roles rol;
 
     // Relación ManyToOne con Estados. La columna en la tabla usuarios se llama `id_estado` y guarda el id (id_estado)
     @ManyToOne(fetch = FetchType.LAZY)

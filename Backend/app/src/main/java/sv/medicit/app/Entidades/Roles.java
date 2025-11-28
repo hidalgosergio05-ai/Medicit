@@ -22,26 +22,27 @@ import lombok.ToString;
  * cree/actualice la tabla desde las entidades (ddl-auto=update).
  */
 @Entity
-@Table(name = "Estados")
+@Table(name = "Roles")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Estados {
+public class Roles {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_estado")
+    @Column(name = "id_rol")
     private int idEstado;
 
-    @Column(name = "estado", length = 15, nullable = false)
+    @Column(name = "nombre_rol", length = 15, nullable = false)
     private String estado;
 
     @Column(name = "descripcion", length = 200, nullable = false)
     private String descripcion;
 
     // Relación inversa (opcional) - lista de usuarios que referencian este estado
-    @OneToMany(mappedBy = "estado", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "rol", fetch = FetchType.LAZY)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private List<Usuarios> usuarios;
+
 }
