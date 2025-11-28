@@ -69,7 +69,7 @@ public class Usuarios {
     // Relación ManyToMany con Especialidades (lado propietario)
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
-        name = "Usuario_Especialidad",
+        name = "Usuario_especialidad",
         joinColumns = @JoinColumn(name = "id_usuario", referencedColumnName = "id_usuario"),
         inverseJoinColumns = @JoinColumn(name = "id_especialidad", referencedColumnName = "id_especialidad")
     )
