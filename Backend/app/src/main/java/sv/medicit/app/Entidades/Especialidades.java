@@ -7,7 +7,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.FetchType;
 
 import lombok.AllArgsConstructor;
@@ -22,27 +22,24 @@ import lombok.ToString;
  * cree/actualice la tabla desde las entidades (ddl-auto=update).
  */
 @Entity
-@Table(name = "Roles")
+@Table(name = "Especialidades")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Roles {
+public class Especialidades {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_rol")
-    private int idRoles;
+    @Column(name = "id_especialidad")
+    private int idEspecialidad;
 
-    @Column(name = "nombre_rol", length = 15, nullable = false)
+    @Column(name = "nombre_especialidad", length = 40, nullable = false)
     private String estado;
 
     @Column(name = "descripcion", length = 200, nullable = false)
     private String descripcion;
-
-    // Relación inversa (opcional) - lista de usuarios que referencian este estado
-    @OneToMany(mappedBy = "rol", fetch = FetchType.LAZY)
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
+ 
+    // Relación ManyToMany con Usuarios (a través de tabla intermedia usuario_especialidad)
+    @ManyToMany(mappedBy = "especialidades", fetch = FetchType.LAZY)
     private List<Usuarios> usuarios;
-
 }
