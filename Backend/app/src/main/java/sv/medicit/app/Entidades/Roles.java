@@ -45,4 +45,10 @@ public class Roles {
     @EqualsAndHashCode.Exclude
     private List<Usuarios> usuarios;
 
+    // Relación inversa - lista de RolPermisoModulo para este rol
+    @OneToMany(mappedBy = "rol", fetch = FetchType.LAZY)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private List<RolPermisoModulo> rolesPermisosModulos;
+
 }

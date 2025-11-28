@@ -1,15 +1,16 @@
 package sv.medicit.app.Entidades;
 
-import java.util.List;
+import java.util.Date;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.Table; 
+import jakarta.persistence.FetchType; 
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.FetchType;
-
+import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,32 +19,30 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 /**
- * Entidad JPA que representa la tabla `Estado`.
+ * Entidad JPA que representa la tabla `usuarios`.
  * Esta clase fue adaptada para mapear columnas y permitir que JPA/Hibernate
  * cree/actualice la tabla desde las entidades (ddl-auto=update).
  */
 @Entity
-@Table(name = "Estados")
+@Table(name = "Modulos")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Estados {
-
-    
+public class Modulos {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_estado")
-    private int idEstado;
+    @Column(name = "id_modulo")
+    private int idModulo;
 
-    @Column(name = "estado", length = 15, nullable = false)
+    @Column(name = "nombre_modulo", length = 30, nullable = false)
     private String estado;
 
     @Column(name = "descripcion", length = 200, nullable = false)
     private String descripcion;
 
-    // Relación inversa (opcional) - lista de usuarios que referencian este estado
-    @OneToMany(mappedBy = "estado", fetch = FetchType.LAZY)
+    // Relación inversa - lista de RolPermisoModulo para este módulo
+    @OneToMany(mappedBy = "modulo", fetch = FetchType.LAZY)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private List<Usuarios> usuarios;
+    private List<RolPermisoModulo> rolesPermisosModulos;
 }
