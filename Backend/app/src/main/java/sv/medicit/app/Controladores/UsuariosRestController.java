@@ -6,11 +6,19 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
+import sv.medicit.app.DTOs.UsuarioCreacionDTO;
 import sv.medicit.app.Entidades.Usuarios;
 import sv.medicit.app.Servicios.UsuariosService;
-import sv.medicit.app.DTOs.UsuarioCreacionDTO;
 
 /**
  * RestController para la gestión de Usuarios.
@@ -137,6 +145,55 @@ public class UsuariosRestController {
                 new ErrorResponse("Error", e.getMessage()),
                 HttpStatus.INTERNAL_SERVER_ERROR
             );
+        }
+    }
+
+    /**
+     * POST /api/usuarios/{id}/especialidades
+     * Asignar una o varias especialidades a un usuario (médico)
+     * Body: [1, 2, 3] (lista de ids de especialidades)
+     */
+    @PostMapping("/{id}/especialidades")
+    public ResponseEntity<?> asignarEspecialidades(@PathVariable("id") Integer id, @RequestBody List<Integer> idsEspecialidades) {
+        try {
+            Usuarios usuario = usuariosService.asignarEspecialidadesAUsuario(id, idsEspecialidades);
+            return new ResponseEntity<>(usuario, HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(new ErrorResponse("Error", e.getMessage()), HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            return new ResponseEntity<>(new ErrorResponse("Error", e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * POST /api/usuarios/{id}/especialidades/{idEspecialidad}
+     * Asignar una sola especialidad al usuario
+     */
+    @PostMapping("/{id}/especialidades/{idEspecialidad}")
+    public ResponseEntity<?> asignarEspecialidad(@PathVariable("id") Integer id, @PathVariable("idEspecialidad") Integer idEspecialidad) {
+        try {
+            Usuarios usuario = usuariosService.asignarEspecialidadAUsuario(id, idEspecialidad);
+            return new ResponseEntity<>(usuario, HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(new ErrorResponse("Error", e.getMessage()), HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            return new ResponseEntity<>(new ErrorResponse("Error", e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * DELETE /api/usuarios/{id}/especialidades/{idEspecialidad}
+     * Eliminar una especialidad de un usuario
+     */
+    @DeleteMapping("/{id}/especialidades/{idEspecialidad}")
+    public ResponseEntity<?> removerEspecialidad(@PathVariable("id") Integer id, @PathVariable("idEspecialidad") Integer idEspecialidad) {
+        try {
+            Usuarios usuario = usuariosService.removerEspecialidadDeUsuario(id, idEspecialidad);
+            return new ResponseEntity<>(usuario, HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(new ErrorResponse("Error", e.getMessage()), HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            return new ResponseEntity<>(new ErrorResponse("Error", e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
