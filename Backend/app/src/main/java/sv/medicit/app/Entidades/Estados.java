@@ -13,10 +13,8 @@ import jakarta.persistence.FetchType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.Data; 
+import lombok.NoArgsConstructor; 
 
 /**
  * Entidad JPA que representa la tabla `Estado`.
@@ -44,15 +42,12 @@ public class Estados {
 
     // Relación inversa (opcional) - lista de usuarios que referencian este estado
     @OneToMany(mappedBy = "estado", fetch = FetchType.LAZY)
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
+    
     @JsonIgnore
     private List<Usuarios> usuarios;
 
     // Relación inversa (opcional) - lista de usuarios que referencian este estado
     @OneToMany(mappedBy = "estado", fetch = FetchType.LAZY)
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
     @JsonIgnore
     private List<Citas> citas;
 }

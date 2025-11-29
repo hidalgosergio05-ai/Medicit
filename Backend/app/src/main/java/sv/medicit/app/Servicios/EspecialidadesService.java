@@ -24,7 +24,7 @@ public class EspecialidadesService {
     }
 
     public Especialidades crear(Especialidades especialidad) {
-        if (especialidad.getEstado() == null || especialidad.getEstado().isEmpty()) {
+        if (especialidad.getNombreEspecialidad() == null || especialidad.getNombreEspecialidad().isEmpty()) {
             throw new IllegalArgumentException("El nombre de la especialidad es requerido");
         }
         return especialidadesRepository.save(especialidad);
@@ -35,8 +35,8 @@ public class EspecialidadesService {
         
         if (especialidadExistente.isPresent()) {
             Especialidades especialidad = especialidadExistente.get();
-            if (especialidadActualizada.getEstado() != null) {
-                especialidad.setEstado(especialidadActualizada.getEstado());
+            if (especialidadActualizada.getNombreEspecialidad() != null) {
+                especialidad.setNombreEspecialidad(especialidadActualizada.getNombreEspecialidad());
             }
             if (especialidadActualizada.getDescripcion() != null) {
                 especialidad.setDescripcion(especialidadActualizada.getDescripcion());

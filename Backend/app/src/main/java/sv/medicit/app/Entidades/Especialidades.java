@@ -1,6 +1,9 @@
 package sv.medicit.app.Entidades;
 
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -35,12 +38,13 @@ public class Especialidades {
     private Integer idEspecialidad;
 
     @Column(name = "nombre_especialidad", length = 40, nullable = false)
-    private String estado;
+    private String nombreEspecialidad;
 
     @Column(name = "descripcion", length = 200, nullable = false)
     private String descripcion;
  
     // Relación ManyToMany con Usuarios (a través de tabla intermedia usuario_especialidad)
     @ManyToMany(mappedBy = "especialidades", fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<Usuarios> usuarios;
 }
