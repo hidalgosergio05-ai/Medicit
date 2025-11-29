@@ -1,5 +1,7 @@
 package sv.medicit.app.Repositorios;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -12,5 +14,6 @@ import sv.medicit.app.Entidades.Respuestas;
 @Repository
 public interface RespuestasRepository extends JpaRepository<Respuestas, Integer> {
     
-    // Métodos personalizados (opcional, se pueden agregar según necesidad)
+    // Obtener todas las respuestas de un usuario específico
+    List<Respuestas> findByUsuarioIdUsuario(Integer idUsuario);
 }

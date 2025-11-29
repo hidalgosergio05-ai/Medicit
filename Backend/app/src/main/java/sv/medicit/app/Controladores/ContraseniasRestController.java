@@ -118,6 +118,30 @@ public class ContraseniasRestController {
     }
 
     /**
+     * GET /api/contrasenias/usuario/{idUsuario}
+     * Obtener la contraseña de un usuario específico por ID de usuario.
+     */
+    @GetMapping("/usuario/{idUsuario}")
+    public ResponseEntity<?> obtenerPorUsuarioId(@PathVariable Integer idUsuario) {
+        try {
+            Optional<Contrasenias> contrasenia = contraseniasService.obtenerPorUsuarioId(idUsuario);
+            if (contrasenia.isPresent()) {
+                return new ResponseEntity<>(contrasenia.get(), HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(
+                    new ErrorResponse("No encontrado", "No existe contraseña para el usuario con ID: " + idUsuario),
+                    HttpStatus.NOT_FOUND
+                );
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<>(
+                new ErrorResponse("Error", e.getMessage()),
+                HttpStatus.INTERNAL_SERVER_ERROR
+            );
+        }
+    }
+
+    /**
      * Clase interna para respuestas de error.
      */
     public static class ErrorResponse {

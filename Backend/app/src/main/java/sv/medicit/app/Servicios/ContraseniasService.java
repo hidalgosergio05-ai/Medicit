@@ -88,4 +88,11 @@ public class ContraseniasService {
         }
         contraseniasRepository.deleteById(id);
     }
+
+    /**
+     * Obtener la contraseña de un usuario específico.
+     */
+    public Optional<Contrasenias> obtenerPorUsuarioId(Integer idUsuario) {
+        return contraseniasRepository.findByUsuarioIdUsuario(idUsuario);
+    }
 }

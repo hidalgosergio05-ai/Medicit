@@ -83,4 +83,11 @@ public class RespuestasService {
         }
         respuestasRepository.deleteById(id);
     }
+
+    /**
+     * Obtener todas las respuestas de un usuario específico (incluyendo preguntas).
+     */
+    public List<Respuestas> obtenerPorUsuarioId(Integer idUsuario) {
+        return respuestasRepository.findByUsuarioIdUsuario(idUsuario);
+    }
 }

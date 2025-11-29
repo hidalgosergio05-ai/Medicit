@@ -118,6 +118,29 @@ public class RespuestasRestController {
     }
 
     /**
+     * GET /api/respuestas/usuario/{idUsuario}
+     * Obtener todas las respuestas/preguntas de un usuario específico con el ID del usuario incluido.
+     */
+    @GetMapping("/usuario/{idUsuario}")
+    public ResponseEntity<?> obtenerPorUsuarioId(@PathVariable Integer idUsuario) {
+        try {
+            List<Respuestas> respuestas = respuestasService.obtenerPorUsuarioId(idUsuario);
+            if (respuestas.isEmpty()) {
+                return new ResponseEntity<>(
+                    new ErrorResponse("No encontrado", "El usuario no tiene respuestas registradas"),
+                    HttpStatus.NOT_FOUND
+                );
+            }
+            return new ResponseEntity<>(respuestas, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(
+                new ErrorResponse("Error", e.getMessage()),
+                HttpStatus.INTERNAL_SERVER_ERROR
+            );
+        }
+    }
+
+    /**
      * Clase interna para respuestas de error.
      */
     public static class ErrorResponse {
