@@ -52,6 +52,7 @@ public class Roles {
     @OneToMany(mappedBy = "rol", fetch = FetchType.EAGER)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
+    @JsonIgnore
     private List<RolPermisoModulo> rolesPermisosModulos;
 
 }
