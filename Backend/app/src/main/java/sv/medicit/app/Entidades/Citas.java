@@ -32,11 +32,11 @@ public class Citas {
     @Column(name = "id_cita")
     private Integer idCita;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "paciente_id", referencedColumnName = "id_usuario", nullable = false)
     private Usuarios paciente;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "medico_id", referencedColumnName = "id_usuario", nullable = false)
     private Usuarios medico;
 
@@ -46,7 +46,7 @@ public class Citas {
     @Column(name = "motivo", length = 200, nullable = false)
     private String motivo;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_estado", referencedColumnName = "id_estado", nullable = false)
     private Estados estado;
 }

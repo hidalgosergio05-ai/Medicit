@@ -125,16 +125,13 @@ public class UsuariosRestController {
 
     /**
      * DELETE /api/usuarios/{id}
-     * Eliminar un usuario por ID.
+     * Marcar un usuario como inactivo.
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<?> eliminar(@PathVariable Integer id) {
         try {
-            usuariosService.eliminar(id);
-            return new ResponseEntity<>(
-                new SuccessResponse("Usuario eliminado exitosamente", id),
-                HttpStatus.OK
-            );
+            Usuarios usuarioInactivo = usuariosService.eliminar(id);
+            return new ResponseEntity<>(usuarioInactivo, HttpStatus.OK);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(
                 new ErrorResponse("Error", e.getMessage()),

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import sv.medicit.app.DTOs.UsuarioCreacionDTO;
 import sv.medicit.app.Entidades.Contrasenias;
 import sv.medicit.app.Entidades.Correos;
+import sv.medicit.app.Entidades.Estados;
 import sv.medicit.app.Entidades.Especialidades;
 import sv.medicit.app.Entidades.Preguntas;
 import sv.medicit.app.Entidades.Respuestas;
@@ -330,12 +331,44 @@ public class UsuariosService {
     }
 
     /**
-     * Eliminar un usuario por ID.
+     * Eliminar un usuario por ID (cambiar estado a inactivo).
+     * En lugar de eliminar el registro, cambia el estado del usuario a inactivo.
      */
-    public void eliminar(Integer id) {
-        if (!usuariosRepository.existsById(id)) {
+    public Usuarios eliminar(Integer id) {
+        Optional<Usuarios> usuarioExistente = usuariosRepository.findById(id);
+        
+        if (usuarioExistente.isPresent()) {
+            Usuarios usuario = usuarioExistente.get();
+            
+            // Buscar el estado "Inactivo" (asumiendo que tiene idEstado = 2 o similar)
+            // Si no existe, buscar por nombre
+            Estados estadoInactivo = null;
+            try {
+                // Intenta encontrar un estado con nombre "Inactivo" o similar
+                List<Estados> estados = estadosRepository.findAll();
+                for (Estados e : estados) {
+                    if (e.getEstado() != null && 
+                        (e.getEstado().equalsIgnoreCase("Inactivo") || 
+                         e.getEstado().equalsIgnoreCase("Inactiva"))) {
+                        estadoInactivo = e;
+                        break;
+                    }
+                }
+            } catch (Exception e) {
+                throw new RuntimeException("Error al buscar estado inactivo: " + e.getMessage());
+            }
+            
+            if (estadoInactivo == null) {
+                throw new RuntimeException("Estado 'Inactivo' no encontrado en la base de datos");
+            }
+            
+            // Cambiar estado a inactivo
+            usuario.setEstado(estadoInactivo);
+            usuariosRepository.save(usuario);
+            
+            return usuario;
+        } else {
             throw new RuntimeException("Usuario no encontrado con ID: " + id);
         }
-        usuariosRepository.deleteById(id);
     }
 }

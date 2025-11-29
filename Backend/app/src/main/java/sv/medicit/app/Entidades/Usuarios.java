@@ -58,13 +58,13 @@ public class Usuarios {
     @Column(name = "fecha_nacimiento", nullable = false)
     private Date fechaNacimiento;
 
-    @JsonIgnore
+    //@JsonIgnore
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_rol", referencedColumnName = "id_rol", nullable = false)
     private Roles rol;
 
     // Relación ManyToOne con Estados. La columna en la tabla usuarios se llama `id_estado` y guarda el id (id_estado)
-    @JsonIgnore
+     
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_estado", referencedColumnName = "id_estado", nullable = false)
     private Estados estado;
