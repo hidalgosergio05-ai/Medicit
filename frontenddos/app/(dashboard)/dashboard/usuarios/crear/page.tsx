@@ -75,6 +75,14 @@ export default function CrearUsuarioPage() {
         setEstados(estadosData)
         setEspecialidades(especialidadesData)
         setPreguntas(preguntasData)
+
+        // Set default state as "Activo"
+        const estadoActivo = estadosData.find(
+          (e) => e.estado?.toLowerCase() === "activo" || e.estado?.toLowerCase() === "activa"
+        )
+        if (estadoActivo) {
+          setValue("idEstado", String(estadoActivo.idEstado))
+        }
       } catch (error) {
         toast({
           variant: "destructive",
@@ -86,7 +94,7 @@ export default function CrearUsuarioPage() {
       }
     }
     loadData()
-  }, [toast])
+  }, [toast, setValue])
 
   const isMedico = () => {
     const rol = roles.find((r) => r.idRol === Number(selectedRol))
@@ -315,11 +323,21 @@ export default function CrearUsuarioPage() {
                       <SelectValue placeholder="Seleccionar estado" />
                     </SelectTrigger>
                     <SelectContent>
-                      {estados.map((estado) => (
-                        <SelectItem key={estado.idEstado} value={String(estado.idEstado)}>
-                          {estado.nombreEstado}
-                        </SelectItem>
-                      ))}
+                      {estados
+                        .filter((e) => {
+                          const estadoNombre = (e.estado || e.nombreEstado || "").toLowerCase()
+                          return (
+                            estadoNombre === "activo" ||
+                            estadoNombre === "activa" ||
+                            estadoNombre === "inactivo" ||
+                            estadoNombre === "inactiva"
+                          )
+                        })
+                        .map((estado) => (
+                          <SelectItem key={estado.idEstado} value={String(estado.idEstado)}>
+                            {estado.estado || estado.nombreEstado}
+                          </SelectItem>
+                        ))}
                     </SelectContent>
                   </Select>
                   {errors.idEstado && <p className="text-xs text-destructive">{errors.idEstado.message}</p>}

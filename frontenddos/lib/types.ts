@@ -131,7 +131,7 @@ export interface Cita {
 
 export interface Permiso {
   idPermiso: number
-  idRol: number
+  idRol?: number
   nombreRol?: string
   modulo: string
   ver: boolean
@@ -139,6 +139,11 @@ export interface Permiso {
   editar: boolean
   eliminar: boolean
   descargar: boolean
+  // Soporte para estructura anidada del backend
+  rol?: {
+    idRol: number
+    nombreRol?: string
+  }
 }
 
 // ==================== PAYLOADS ====================

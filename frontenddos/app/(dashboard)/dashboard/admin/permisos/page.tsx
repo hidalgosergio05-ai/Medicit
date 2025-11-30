@@ -103,23 +103,27 @@ export default function PermisosPage() {
     try {
       for (const [modulo, permiso] of Object.entries(localPermisos)) {
         if (permiso.idPermiso) {
+          // Actualizar permiso existente con estructura completa
           await api.actualizarPermiso(permiso.idPermiso, {
-            ver: permiso.ver,
-            crear: permiso.crear,
-            editar: permiso.editar,
-            eliminar: permiso.eliminar,
-            descargar: permiso.descargar,
-          })
-        } else {
-          await api.crearPermiso({
-            idRol: Number(selectedRol),
             modulo,
             ver: permiso.ver,
             crear: permiso.crear,
             editar: permiso.editar,
             eliminar: permiso.eliminar,
             descargar: permiso.descargar,
-          })
+            rol: { idRol: Number(selectedRol) },
+          } as any)
+        } else {
+          // Crear nuevo permiso
+          await api.crearPermiso({
+            modulo,
+            ver: permiso.ver,
+            crear: permiso.crear,
+            editar: permiso.editar,
+            eliminar: permiso.eliminar,
+            descargar: permiso.descargar,
+            rol: { idRol: Number(selectedRol) },
+          } as any)
         }
       }
 

@@ -243,16 +243,8 @@ public class UsuariosService {
             throw new RuntimeException("Alguna(s) especialidad(es) no fue encontrada");
         }
 
-        if (usuario.getEspecialidades() == null) {
-            usuario.setEspecialidades(especialidadesEncontradas);
-        } else {
-            // Agregar nuevas sin duplicar
-            for (Especialidades e : especialidadesEncontradas) {
-                if (!usuario.getEspecialidades().contains(e)) {
-                    usuario.getEspecialidades().add(e);
-                }
-            }
-        }
+        // Reemplazar completamente la lista de especialidades
+        usuario.setEspecialidades(especialidadesEncontradas);
 
         return usuariosRepository.save(usuario);
     }

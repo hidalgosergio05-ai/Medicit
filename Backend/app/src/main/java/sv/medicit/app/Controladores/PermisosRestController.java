@@ -50,12 +50,29 @@ public class PermisosRestController {
      * Crear un nuevo permiso
      */
     @PostMapping
-    public ResponseEntity<Permisos> crear(@RequestBody Permisos permiso) {
+    public ResponseEntity<?> crear(@RequestBody Permisos permiso) {
         try {
+            // Validar que el rol esté presente
+            if (permiso.getRol() == null || permiso.getRol().getIdRol() == null) {
+                return new ResponseEntity<>(
+                    new ErrorResponse("Validación fallida", "El rol es requerido"),
+                    HttpStatus.BAD_REQUEST
+                );
+            }
+            // Validar que el módulo esté presente
+            if (permiso.getModulo() == null || permiso.getModulo().isEmpty()) {
+                return new ResponseEntity<>(
+                    new ErrorResponse("Validación fallida", "El módulo es requerido"),
+                    HttpStatus.BAD_REQUEST
+                );
+            }
             Permisos permisoGuardado = permisosRepository.save(permiso);
             return new ResponseEntity<>(permisoGuardado, HttpStatus.CREATED);
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(
+                new ErrorResponse("Error", e.getMessage()),
+                HttpStatus.BAD_REQUEST
+            );
         }
     }
 
@@ -68,12 +85,15 @@ public class PermisosRestController {
             @RequestBody Permisos permisoActualizado) {
         return permisosRepository.findById(id)
                 .map(permiso -> {
-                    if (permisoActualizado.getRol() != null) {
+                    // Actualizar rol solo si viene en el payload
+                    if (permisoActualizado.getRol() != null && permisoActualizado.getRol().getIdRol() != null) {
                         permiso.setRol(permisoActualizado.getRol());
                     }
+                    // Actualizar módulo si viene
                     if (permisoActualizado.getModulo() != null) {
                         permiso.setModulo(permisoActualizado.getModulo());
                     }
+                    // Actualizar booleanos
                     if (permisoActualizado.getVer() != null) {
                         permiso.setVer(permisoActualizado.getVer());
                     }
@@ -114,5 +134,26 @@ public class PermisosRestController {
     public ResponseEntity<List<Permisos>> obtenerPorRol(@PathVariable Integer idRol) {
         List<Permisos> permisos = permisosRepository.findByRolIdRol(idRol);
         return new ResponseEntity<>(permisos, HttpStatus.OK);
+    }
+
+    /**
+     * Clase interna para respuestas de error.
+     */
+    public static class ErrorResponse {
+        public String tipo;
+        public String mensaje;
+
+        public ErrorResponse(String tipo, String mensaje) {
+            this.tipo = tipo;
+            this.mensaje = mensaje;
+        }
+
+        public String getTipo() {
+            return tipo;
+        }
+
+        public String getMensaje() {
+            return mensaje;
+        }
     }
 }

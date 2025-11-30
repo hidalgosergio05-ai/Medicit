@@ -46,7 +46,11 @@ export default function EditarUsuarioPage() {
     setValue,
     watch,
     formState: { errors },
-  } = useForm<EditUserFormData>()
+  } = useForm<EditUserFormData>({
+    defaultValues: {
+      especialidades: [],
+    },
+  })
 
   useEffect(() => {
     const loadData = async () => {
@@ -68,9 +72,23 @@ export default function EditarUsuarioPage() {
         setValue("nombres", usuarioData.nombres)
         setValue("apellidos", usuarioData.apellidos)
         setValue("correo", usuarioData.correo || "")
-        setValue("idRol", String(usuarioData.idRol || ""))
-        setValue("idEstado", String(usuarioData.idEstado || ""))
-        setSelectedRol(String(usuarioData.idRol || ""))
+        
+        // Set Rol - manejo de estructura anidada
+        const rolId = usuarioData.rol?.idRol || usuarioData.idRol
+        setValue("idRol", String(rolId || ""))
+        setSelectedRol(String(rolId || ""))
+        
+        // Set Estado - manejo de estructura anidada
+        const estadoId = usuarioData.estado?.idEstado || usuarioData.idEstado
+        setValue("idEstado", String(estadoId || ""))
+        
+        // Set Especialidades si es médico
+        if (usuarioData.especialidades && usuarioData.especialidades.length > 0) {
+          setValue(
+            "especialidades",
+            usuarioData.especialidades.map((e) => String(e.idEspecialidad))
+          )
+        }
       } catch (error) {
         toast({
           variant: "destructive",
@@ -233,11 +251,21 @@ export default function EditarUsuarioPage() {
                       <SelectValue placeholder="Seleccionar estado" />
                     </SelectTrigger>
                     <SelectContent>
-                      {estados.map((estado) => (
-                        <SelectItem key={estado.idEstado} value={String(estado.idEstado)}>
-                          {estado.nombreEstado}
-                        </SelectItem>
-                      ))}
+                      {estados
+                        .filter((e) => {
+                          const estadoNombre = (e.estado || e.nombreEstado || "").toLowerCase()
+                          return (
+                            estadoNombre === "activo" ||
+                            estadoNombre === "activa" ||
+                            estadoNombre === "inactivo" ||
+                            estadoNombre === "inactiva"
+                          )
+                        })
+                        .map((estado) => (
+                          <SelectItem key={estado.idEstado} value={String(estado.idEstado)}>
+                            {estado.estado || estado.nombreEstado}
+                          </SelectItem>
+                        ))}
                     </SelectContent>
                   </Select>
                 </div>
@@ -247,20 +275,37 @@ export default function EditarUsuarioPage() {
                 <div className="space-y-2">
                   <Label>Especialidades</Label>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                    {especialidades.map((esp) => (
-                      <label
-                        key={esp.idEspecialidad}
-                        className="flex items-center gap-2 p-2 border rounded-lg cursor-pointer hover:bg-accent"
-                      >
-                        <input
-                          type="checkbox"
-                          value={esp.idEspecialidad}
-                          {...register("especialidades")}
-                          className="rounded"
-                        />
-                        <span className="text-sm">{esp.nombreEspecialidad}</span>
-                      </label>
-                    ))}
+                    {especialidades.map((esp) => {
+                      const isChecked = watch("especialidades")?.includes(String(esp.idEspecialidad))
+                      return (
+                        <label
+                          key={esp.idEspecialidad}
+                          className="flex items-center gap-2 p-2 border rounded-lg cursor-pointer hover:bg-accent"
+                        >
+                          <input
+                            type="checkbox"
+                            checked={isChecked || false}
+                            value={String(esp.idEspecialidad)}
+                            onChange={(e) => {
+                              const currentEspecialidades = watch("especialidades") || []
+                              if (e.target.checked) {
+                                setValue("especialidades", [
+                                  ...currentEspecialidades,
+                                  String(esp.idEspecialidad),
+                                ])
+                              } else {
+                                setValue(
+                                  "especialidades",
+                                  currentEspecialidades.filter((id) => id !== String(esp.idEspecialidad))
+                                )
+                              }
+                            }}
+                            className="rounded"
+                          />
+                          <span className="text-sm">{esp.nombreEspecialidad}</span>
+                        </label>
+                      )
+                    })}
                   </div>
                 </div>
               )}
