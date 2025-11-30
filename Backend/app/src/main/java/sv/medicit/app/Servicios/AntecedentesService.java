@@ -62,6 +62,9 @@ public class AntecedentesService {
             if (antecedenteActualizado.getAntecedente() != null) {
                 antecedente.setAntecedente(antecedenteActualizado.getAntecedente());
             }
+            if (antecedenteActualizado.getDescripcion() != null) {
+                antecedente.setDescripcion(antecedenteActualizado.getDescripcion());
+            }
             
             return antecedentesRepository.save(antecedente);
         } else {

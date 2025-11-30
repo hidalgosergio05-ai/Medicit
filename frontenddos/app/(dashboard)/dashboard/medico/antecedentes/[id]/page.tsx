@@ -30,8 +30,13 @@ export default function AntecedenteDetailPage() {
         const antecedenteData = await api.getAntecedente(antecedenteId)
         setAntecedente(antecedenteData)
 
-        const pacienteData = await api.getUsuario(antecedenteData.idPaciente)
-        setPaciente(pacienteData)
+        // Obtener paciente del objeto usuario anidado o por ID
+        if (antecedenteData.usuario) {
+          setPaciente(antecedenteData.usuario)
+        } else if (antecedenteData.idPaciente) {
+          const pacienteData = await api.getUsuario(antecedenteData.idPaciente)
+          setPaciente(pacienteData)
+        }
       } catch (error) {
         toast({
           variant: "destructive",
@@ -77,7 +82,7 @@ export default function AntecedenteDetailPage() {
             </Button>
             <div>
               <h2 className="text-2xl font-bold">Antecedente #{antecedente.idAntecedente}</h2>
-              <p className="text-muted-foreground">{antecedente.tipo || "General"}</p>
+              <p className="text-muted-foreground">{antecedente.antecedente || "General"}</p>
             </div>
           </div>
           {canEdit("modulo_medico") && (

@@ -17,7 +17,7 @@ import Link from "next/link"
 import type { Antecedente, Usuario } from "@/lib/types"
 
 interface AntecedenteFormData {
-  tipo: string
+  antecedente: string
   descripcion: string
 }
 
@@ -44,11 +44,16 @@ export default function EditarAntecedentePage() {
       try {
         const antecedenteData = await api.getAntecedente(antecedenteId)
         setAntecedente(antecedenteData)
-        setValue("tipo", antecedenteData.tipo || "")
-        setValue("descripcion", antecedenteData.descripcion)
+        setValue("antecedente", antecedenteData.antecedente || "")
+        setValue("descripcion", antecedenteData.descripcion || "")
 
-        const pacienteData = await api.getUsuario(antecedenteData.idPaciente)
-        setPaciente(pacienteData)
+        // Obtener paciente del objeto usuario anidado o por ID
+        if (antecedenteData.usuario) {
+          setPaciente(antecedenteData.usuario)
+        } else if (antecedenteData.idPaciente) {
+          const pacienteData = await api.getUsuario(antecedenteData.idPaciente)
+          setPaciente(pacienteData)
+        }
       } catch (error) {
         toast({
           variant: "destructive",
@@ -68,7 +73,7 @@ export default function EditarAntecedentePage() {
     setIsSubmitting(true)
     try {
       await api.actualizarAntecedente(antecedenteId, {
-        tipo: data.tipo || undefined,
+        antecedente: data.antecedente || undefined,
         descripcion: data.descripcion,
       })
 
@@ -134,8 +139,8 @@ export default function EditarAntecedentePage() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="tipo">Tipo de antecedente</Label>
-                <Input id="tipo" placeholder="Ej: Alergia, Cirugía, Enfermedad crónica..." {...register("tipo")} />
+                <Label htmlFor="antecedente">Tipo de antecedente</Label>
+                <Input id="antecedente" placeholder="Ej: Alergia, Cirugía, Enfermedad crónica..." {...register("antecedente")} />
               </div>
 
               <div className="space-y-2">

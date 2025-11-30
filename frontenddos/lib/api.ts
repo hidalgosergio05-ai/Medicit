@@ -373,7 +373,10 @@ class ApiService {
     })
   }
 
-  async actualizarAntecedente(id: number, payload: Partial<Antecedente>): Promise<Antecedente> {
+  async actualizarAntecedente(
+    id: number,
+    payload: { antecedente?: string; descripcion?: string }
+  ): Promise<Antecedente> {
     return this.request<Antecedente>(`/antecedentes/${id}`, {
       method: "PUT",
       body: JSON.stringify(payload),
