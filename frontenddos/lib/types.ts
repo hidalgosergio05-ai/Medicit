@@ -4,13 +4,30 @@ export interface Usuario {
   nombreUsuario: string
   nombres: string
   apellidos: string
-  correo: string
+  correo?: string
   dui?: string
   fechaNacimiento?: string
-  idRol: number
-  nombreRol: string
+  idRol?: number
+  nombreRol?: string
   idEstado?: number
   nombreEstado?: string
+  // Soporte para estructura anidada del endpoint /api/users
+  rol?: {
+    idRol: number
+    nombreRol: string
+    descripcion?: string
+    rolesPermisosModulos?: any[]
+  }
+  estado?: {
+    idEstado: number
+    estado: string
+    descripcion?: string
+  }
+  especialidades?: Array<{
+    idEspecialidad: number
+    nombreEspecialidad: string
+    descripcion?: string
+  }>
 }
 
 export interface PermisoModulo {

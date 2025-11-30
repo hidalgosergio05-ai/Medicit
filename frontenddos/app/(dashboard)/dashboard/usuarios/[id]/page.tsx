@@ -6,7 +6,7 @@ import { DashboardLayout } from "@/components/layout/dashboard-layout"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { api } from "@/lib/api"
+import { api, getNombreRol } from "@/lib/api"
 import { useAuth } from "@/contexts/auth-context"
 import { useToast } from "@/hooks/use-toast"
 import { LoadingPage } from "@/components/ui/loading-spinner"
@@ -38,8 +38,8 @@ export default function UsuarioDetailPage() {
     id: number | null
   }>({ open: false, type: null, id: null })
 
-  const isPaciente = usuario?.nombreRol?.toLowerCase() === "paciente"
-  const isMedico = usuario?.nombreRol?.toLowerCase() === "medico" || usuario?.nombreRol?.toLowerCase() === "médico"
+  const isPaciente = usuario ? getNombreRol(usuario).toLowerCase() === "paciente" : false
+  const isMedico = usuario ? (getNombreRol(usuario).toLowerCase() === "medico" || getNombreRol(usuario).toLowerCase() === "médico") : false
 
   useEffect(() => {
     const loadData = async () => {
@@ -59,17 +59,15 @@ export default function UsuarioDetailPage() {
         setEspecialidades(allEspecialidades)
 
         // Load role-specific data
-        if (usuarioData.nombreRol?.toLowerCase() === "paciente") {
+        const rolNombre = getNombreRol(usuarioData).toLowerCase()
+        if (rolNombre === "paciente") {
           const [allAntecedentes, citasPaciente] = await Promise.all([
             api.getAntecedentes(),
             api.getCitasPorPaciente(userId),
           ])
           setAntecedentes(allAntecedentes.filter((a) => a.idPaciente === userId))
           setCitas(citasPaciente)
-        } else if (
-          usuarioData.nombreRol?.toLowerCase() === "medico" ||
-          usuarioData.nombreRol?.toLowerCase() === "médico"
-        ) {
+        } else if (rolNombre === "medico" || rolNombre === "médico") {
           const citasMedico = await api.getCitasPorMedico(userId)
           setCitas(citasMedico)
         }
@@ -197,12 +195,12 @@ export default function UsuarioDetailPage() {
               </div>
               <div>
                 <dt className="text-sm font-medium text-muted-foreground">Rol</dt>
-                <dd className="text-sm">{usuario.nombreRol}</dd>
+                <dd className="text-sm">{getNombreRol(usuario || {})}</dd>
               </div>
               <div>
                 <dt className="text-sm font-medium text-muted-foreground">Estado</dt>
                 <dd>
-                  <StatusBadge status={usuario.nombreEstado} />
+                  <StatusBadge status={usuario?.nombreEstado || usuario?.estado?.estado || ""} />
                 </dd>
               </div>
             </dl>
@@ -269,7 +267,7 @@ export default function UsuarioDetailPage() {
                               setDeleteDialog({
                                 open: true,
                                 type: "telefono",
-                                id: tel.idTelefono,
+                                id: tel.idTelefono || null,
                               })
                             }
                           >
@@ -315,7 +313,7 @@ export default function UsuarioDetailPage() {
                               setDeleteDialog({
                                 open: true,
                                 type: "correo",
-                                id: corr.idCorreo,
+                                id: corr.idCorreo || null,
                               })
                             }
                           >
@@ -390,28 +388,34 @@ export default function UsuarioDetailPage() {
                 </CardHeader>
                 <CardContent>
                   <DataTable
-                    data={citas}
+                    data={citas as unknown as Record<string, unknown>[]}
                     columns={[
                       {
                         key: "fechaHora",
                         header: "Fecha y hora",
-                        render: (cita: Cita) => formatDateTime(cita.fechaHora),
+                        render: (item: any) => formatDateTime((item as Cita).fechaHora),
                       },
                       {
                         key: isPaciente ? "medico" : "paciente",
                         header: isPaciente ? "Médico" : "Paciente",
-                        render: (cita: Cita) =>
-                          isPaciente
-                            ? `${cita.medico.nombres} ${cita.medico.apellidos}`
-                            : `${cita.paciente.nombres} ${cita.paciente.apellidos}`,
+                        render: (item: any) => {
+                          const cita = item as Cita
+                          return isPaciente
+                            ? `${cita.medico?.nombres || ""} ${cita.medico?.apellidos || ""}`
+                            : `${cita.paciente?.nombres || ""} ${cita.paciente?.apellidos || ""}`
+                        },
                       },
                       { key: "motivo", header: "Motivo" },
                       {
                         key: "estado",
                         header: "Estado",
-                        render: (cita: Cita) => <StatusBadge status={cita.estado.nombreEstado} />,
+                        render: (item: any) => {
+                          const cita = item as Cita
+                          const status = cita.estado?.nombreEstado || cita.estadoCita || ""
+                          return <StatusBadge status={status} />
+                        },
                       },
-                    ]}
+                    ] as any}
                     pageSize={5}
                   />
                 </CardContent>

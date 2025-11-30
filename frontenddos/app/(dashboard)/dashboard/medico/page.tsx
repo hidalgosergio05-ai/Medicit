@@ -109,34 +109,37 @@ export default function GestionMedicaPage() {
         </CardHeader>
         <CardContent>
           <DataTable
-            data={antecedentes}
-            columns={columns}
+            data={antecedentes as unknown as Record<string, unknown>[]}
+            columns={columns as any}
             isLoading={isLoading}
             searchPlaceholder="Buscar por tipo o descripción..."
-            actions={(antecedente: Antecedente) => (
-              <div className="flex items-center justify-end gap-2">
-                <Button variant="ghost" size="icon" asChild>
-                  <Link href={`/dashboard/medico/antecedentes/${antecedente.idAntecedente}`}>
-                    <Eye className="h-4 w-4" />
-                    <span className="sr-only">Ver</span>
-                  </Link>
-                </Button>
-                {canEdit("modulo_medico") && (
+            actions={(item: any) => {
+              const antecedente = item as Antecedente
+              return (
+                <div className="flex items-center justify-end gap-2">
                   <Button variant="ghost" size="icon" asChild>
-                    <Link href={`/dashboard/medico/antecedentes/${antecedente.idAntecedente}/editar`}>
-                      <Pencil className="h-4 w-4" />
-                      <span className="sr-only">Editar</span>
+                    <Link href={`/dashboard/medico/antecedentes/${antecedente.idAntecedente}`}>
+                      <Eye className="h-4 w-4" />
+                      <span className="sr-only">Ver</span>
                     </Link>
                   </Button>
-                )}
-                {canDelete("modulo_medico") && (
-                  <Button variant="ghost" size="icon" onClick={() => setDeleteDialog({ open: true, antecedente })}>
-                    <Trash2 className="h-4 w-4 text-destructive" />
-                    <span className="sr-only">Eliminar</span>
-                  </Button>
-                )}
-              </div>
-            )}
+                  {canEdit("modulo_medico") && (
+                    <Button variant="ghost" size="icon" asChild>
+                      <Link href={`/dashboard/medico/antecedentes/${antecedente.idAntecedente}/editar`}>
+                        <Pencil className="h-4 w-4" />
+                        <span className="sr-only">Editar</span>
+                      </Link>
+                    </Button>
+                  )}
+                  {canDelete("modulo_medico") && (
+                    <Button variant="ghost" size="icon" onClick={() => setDeleteDialog({ open: true, antecedente })}>
+                      <Trash2 className="h-4 w-4 text-destructive" />
+                      <span className="sr-only">Eliminar</span>
+                    </Button>
+                  )}
+                </div>
+              )
+            }}
           />
         </CardContent>
       </Card>

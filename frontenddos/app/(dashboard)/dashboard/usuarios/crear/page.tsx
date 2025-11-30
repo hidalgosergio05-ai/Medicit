@@ -90,7 +90,8 @@ export default function CrearUsuarioPage() {
 
   const isMedico = () => {
     const rol = roles.find((r) => r.idRol === Number(selectedRol))
-    return rol?.nombreRol.toLowerCase() === "medico" || rol?.nombreRol.toLowerCase() === "médico"
+    const nombreRol = rol?.nombreRol?.toLowerCase?.() || ""
+    return nombreRol === "medico" || nombreRol === "médico"
   }
 
   const onSubmit = async (data: CreateUserFormData) => {

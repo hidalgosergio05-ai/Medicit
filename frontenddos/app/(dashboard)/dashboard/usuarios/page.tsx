@@ -5,7 +5,7 @@ import { DashboardLayout } from "@/components/layout/dashboard-layout"
 import { DataTable } from "@/components/ui/data-table"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { api } from "@/lib/api"
+import { api, getNombreRol, normalizeUsuario } from "@/lib/api"
 import { useAuth } from "@/contexts/auth-context"
 import { useToast } from "@/hooks/use-toast"
 import { ConfirmDialog } from "@/components/ui/confirm-dialog"
@@ -29,7 +29,9 @@ export default function UsuariosPage() {
   const loadUsuarios = async () => {
     try {
       const data = await api.getUsuarios()
-      setUsuarios(data)
+      // Normalizar usuarios para que tengan estructura plana
+      const normalized = data.map(normalizeUsuario)
+      setUsuarios(normalized)
     } catch (error) {
       toast({
         variant: "destructive",
@@ -76,7 +78,7 @@ export default function UsuariosPage() {
     {
       key: "nombreEstado",
       header: "Estado",
-      render: (usuario: Usuario) => <StatusBadge status={usuario.nombreEstado} />,
+      render: (usuario: any) => <StatusBadge status={usuario.nombreEstado || ""} />,
     },
   ]
 
@@ -99,34 +101,37 @@ export default function UsuariosPage() {
         </CardHeader>
         <CardContent>
           <DataTable
-            data={usuarios}
-            columns={columns}
+            data={usuarios as unknown as Record<string, unknown>[]}
+            columns={columns as any}
             isLoading={isLoading}
             searchPlaceholder="Buscar por usuario, nombre, apellido o correo..."
-            actions={(usuario: Usuario) => (
-              <div className="flex items-center justify-end gap-2">
-                <Button variant="ghost" size="icon" asChild>
-                  <Link href={`/dashboard/usuarios/${usuario.idUsuario}`}>
-                    <Eye className="h-4 w-4" />
-                    <span className="sr-only">Ver</span>
-                  </Link>
-                </Button>
-                {canEdit("modulo_usuarios") && (
+            actions={(item: any) => {
+              const usuario = item as Usuario
+              return (
+                <div className="flex items-center justify-end gap-2">
                   <Button variant="ghost" size="icon" asChild>
-                    <Link href={`/dashboard/usuarios/${usuario.idUsuario}/editar`}>
-                      <Pencil className="h-4 w-4" />
-                      <span className="sr-only">Editar</span>
+                    <Link href={`/dashboard/usuarios/${usuario.idUsuario}`}>
+                      <Eye className="h-4 w-4" />
+                      <span className="sr-only">Ver</span>
                     </Link>
                   </Button>
-                )}
-                {canDelete("modulo_usuarios") && (
-                  <Button variant="ghost" size="icon" onClick={() => setDeleteDialog({ open: true, usuario })}>
-                    <Trash2 className="h-4 w-4 text-destructive" />
-                    <span className="sr-only">Desactivar</span>
-                  </Button>
-                )}
-              </div>
-            )}
+                  {canEdit("modulo_usuarios") && (
+                    <Button variant="ghost" size="icon" asChild>
+                      <Link href={`/dashboard/usuarios/${usuario.idUsuario}/editar`}>
+                        <Pencil className="h-4 w-4" />
+                        <span className="sr-only">Editar</span>
+                      </Link>
+                    </Button>
+                  )}
+                  {canDelete("modulo_usuarios") && (
+                    <Button variant="ghost" size="icon" onClick={() => setDeleteDialog({ open: true, usuario })}>
+                      <Trash2 className="h-4 w-4 text-destructive" />
+                      <span className="sr-only">Desactivar</span>
+                    </Button>
+                  )}
+                </div>
+              )
+            }}
           />
         </CardContent>
       </Card>

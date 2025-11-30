@@ -12,9 +12,9 @@ import { api } from "@/lib/api"
 import { useAuth } from "@/contexts/auth-context"
 import { useToast } from "@/hooks/use-toast"
 import { formatDateTime } from "@/lib/format"
-import { Plus, Eye, Check, X, Trash2, Calendar } from "lucide-react"
+import { Plus, Eye, Check, X, Trash2, Calendar, UserCircle } from "lucide-react"
 import Link from "next/link"
-import type { Cita, Estado } from "@/lib/types"
+import type { Cita, Estado, Usuario, Especialidad } from "@/lib/types"
 
 export default function CitasPage() {
   const { user, isPaciente, isMedico, isAdmin, canCreate, canEdit, canDelete } = useAuth()
@@ -28,6 +28,7 @@ export default function CitasPage() {
 
   const [citas, setCitas] = useState<Cita[]>([])
   const [estados, setEstados] = useState<Estado[]>([])
+  const [usuarios, setUsuarios] = useState<Usuario[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [deleteDialog, setDeleteDialog] = useState<{ open: boolean; cita: Cita | null }>({
     open: false,
@@ -38,6 +39,12 @@ export default function CitasPage() {
     cita: Cita | null
     action: "aceptar" | "rechazar" | null
   }>({ open: false, cita: null, action: null })
+
+  const getEspecialidadesDelMedico = (idMedico: number): string => {
+    const medico = usuarios.find((u) => u.idUsuario === idMedico)
+    if (!medico?.especialidades || medico.especialidades.length === 0) return "Sin especialidad"
+    return medico.especialidades.map((e) => e.nombreEspecialidad).join(", ")
+  }
 
   const loadCitas = async () => {
     try {
@@ -60,9 +67,10 @@ export default function CitasPage() {
         data = await api.getCitas()
       }
       
-      const estadosData = await api.getEstados()
+      const [estadosData, usuariosData] = await Promise.all([api.getEstados(), api.getUsuarios()])
       setCitas(data)
       setEstados(estadosData)
+      setUsuarios(usuariosData)
       
     } catch (error: unknown) {
       const err = error as { message?: string; mensaje?: string }
@@ -166,7 +174,11 @@ export default function CitasPage() {
     {
       key: "medico",
       header: "Médico",
-      render: (cita: Cita) => `Dr. ${cita.nombreMedico || `${cita.medico?.nombres} ${cita.medico?.apellidos}`}`,
+      render: (cita: Cita) => {
+        const nombreMedico = cita.nombreMedico || `${cita.medico?.nombres} ${cita.medico?.apellidos}`
+        const espec = getEspecialidadesDelMedico(cita.idMedico || 0)
+        return `Dr. ${nombreMedico} - ${espec}`
+      },
     },
     ...baseColumns.slice(1),
   ]
@@ -191,7 +203,11 @@ export default function CitasPage() {
     {
       key: "medico",
       header: "Médico",
-      render: (cita: Cita) => `Dr. ${cita.nombreMedico || `${cita.medico?.nombres} ${cita.medico?.apellidos}`}`,
+      render: (cita: Cita) => {
+        const nombreMedico = cita.nombreMedico || `${cita.medico?.nombres} ${cita.medico?.apellidos}`
+        const espec = getEspecialidadesDelMedico(cita.idMedico || 0)
+        return `Dr. ${nombreMedico} - ${espec}`
+      },
     },
     ...baseColumns.slice(1),
   ]

@@ -10,13 +10,13 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { api } from "@/lib/api"
+import { api, getNombreRol } from "@/lib/api"
 import { useAuth } from "@/contexts/auth-context"
 import { useToast } from "@/hooks/use-toast"
 import { LoadingSpinner, LoadingPage } from "@/components/ui/loading-spinner"
-import { ArrowLeft, Save, Calendar, User, Stethoscope } from "lucide-react"
+import { ArrowLeft, Save, Calendar, User, Stethoscope, UserCircle } from "lucide-react"
 import Link from "next/link"
-import type { Usuario, Estado } from "@/lib/types"
+import type { Usuario, Estado, Especialidad } from "@/lib/types"
 
 interface CitaFormData {
   idMedico: string
@@ -33,6 +33,8 @@ export default function CrearCitaPage() {
   const [medicos, setMedicos] = useState<Usuario[]>([])
   const [pacientes, setPacientes] = useState<Usuario[]>([])
   const [estados, setEstados] = useState<Estado[]>([])
+  const [especialidades, setEspecialidades] = useState<Especialidad[]>([])
+  const [medicoEspecialidades, setMedicoEspecialidades] = useState<Map<number, Especialidad[]>>(new Map())
   const [isLoadingData, setIsLoadingData] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -47,17 +49,34 @@ export default function CrearCitaPage() {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const [usuarios, estadosData] = await Promise.all([api.getUsuarios(), api.getEstados()])
+        const [usuarios, estadosData, especialidadesData] = await Promise.all([
+          api.getUsuarios(),
+          api.getEstados(),
+          api.getEspecialidades(),
+        ])
 
-        // Filter doctors
-        const medicosList = usuarios.filter(
-          (u) => u.nombreRol.toLowerCase() === "medico" || u.nombreRol.toLowerCase() === "médico",
-        )
+        // Filter doctors - soporta ambas estructuras
+        const medicosList = usuarios.filter((u) => {
+          const nombreRol = getNombreRol(u).toLowerCase()
+          return nombreRol === "medico" || nombreRol === "médico"
+        })
         setMedicos(medicosList)
+        setEspecialidades(especialidadesData)
+
+        // Mapear especialidades por médico
+        const especMap = new Map<number, Especialidad[]>()
+        medicosList.forEach((medico) => {
+          const espec = medico.especialidades || []
+          especMap.set(medico.idUsuario, espec)
+        })
+        setMedicoEspecialidades(especMap)
 
         // Filter patients (only for admin)
         if (isAdmin()) {
-          const pacientesList = usuarios.filter((u) => u.nombreRol.toLowerCase() === "paciente")
+          const pacientesList = usuarios.filter((u) => {
+            const nombreRol = getNombreRol(u).toLowerCase()
+            return nombreRol === "paciente"
+          })
           setPacientes(pacientesList)
         }
 
@@ -79,10 +98,11 @@ export default function CrearCitaPage() {
   const onSubmit = async (data: CitaFormData) => {
     setIsSubmitting(true)
 
-    // Get "Pendiente" state
-    const estadoPendiente = estados.find(
-      (e) => (e.estado?.toLowerCase?.() || e.nombreEstado?.toLowerCase?.() || "").includes("pendiente"),
-    )
+    // Get "Pendiente" state - soporta ambas estructuras
+    const estadoPendiente = estados.find((e) => {
+      const estadoName = (e.estado || e.nombreEstado || "").toLowerCase()
+      return estadoName.includes("pendiente")
+    })
 
     if (!estadoPendiente) {
       toast({
@@ -225,11 +245,20 @@ export default function CrearCitaPage() {
                     {medicos.length === 0 ? (
                       <div className="p-2 text-sm text-muted-foreground text-center">No hay médicos disponibles</div>
                     ) : (
-                      medicos.map((medico) => (
-                        <SelectItem key={medico.idUsuario} value={String(medico.idUsuario)}>
-                          Dr. {medico.nombres} {medico.apellidos}
-                        </SelectItem>
-                      ))
+                      medicos.map((medico) => {
+                        const espec = medicoEspecialidades.get(medico.idUsuario) || []
+                        const especNombre = espec.length > 0 ? espec[0].nombreEspecialidad : "Sin especialidad"
+                        return (
+                          <SelectItem key={medico.idUsuario} value={String(medico.idUsuario)}>
+                            <div className="flex items-center gap-2">
+                              <UserCircle className="h-4 w-4" />
+                              <span>
+                                Dr. {medico.nombres} {medico.apellidos} - {especNombre}
+                              </span>
+                            </div>
+                          </SelectItem>
+                        )
+                      })
                     )}
                   </SelectContent>
                 </Select>

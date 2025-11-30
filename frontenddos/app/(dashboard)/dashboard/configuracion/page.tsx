@@ -60,7 +60,7 @@ export default function ConfiguracionPage() {
     if (user) {
       profileForm.setValue("nombres", user.nombres)
       profileForm.setValue("apellidos", user.apellidos)
-      profileForm.setValue("correo", user.correo)
+      profileForm.setValue("correo", user.correo || "")
       loadContactData()
     }
   }, [user])

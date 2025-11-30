@@ -22,6 +22,21 @@ import type {
 const BASE_URL = "http://localhost:80/api"
 const TOKEN_KEY = "medicit_token"
 
+// Helper para obtener nombreRol desde estructura plana o anidada
+export function getNombreRol(usuario: Usuario): string {
+  return usuario.nombreRol || usuario.rol?.nombreRol || ""
+}
+
+// Helper para normalizar usuario a estructura plana
+export function normalizeUsuario(usuario: Usuario): Usuario {
+  return {
+    ...usuario,
+    nombreRol: getNombreRol(usuario),
+    nombreEstado: usuario.nombreEstado || usuario.estado?.estado || "",
+    correo: usuario.correo || usuario.correo || "",
+  }
+}
+
 // Función para convertir snake_case a camelCase
 function snakeToCamel(str: string): string {
   return str.replace(/_([a-z])/g, (match, letter) => letter.toUpperCase())

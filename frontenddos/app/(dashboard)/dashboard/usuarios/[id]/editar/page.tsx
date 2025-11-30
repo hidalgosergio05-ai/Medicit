@@ -67,10 +67,10 @@ export default function EditarUsuarioPage() {
         setValue("nombreUsuario", usuarioData.nombreUsuario)
         setValue("nombres", usuarioData.nombres)
         setValue("apellidos", usuarioData.apellidos)
-        setValue("correo", usuarioData.correo)
-        setValue("idRol", String(usuarioData.idRol))
-        setValue("idEstado", String(usuarioData.idEstado))
-        setSelectedRol(String(usuarioData.idRol))
+        setValue("correo", usuarioData.correo || "")
+        setValue("idRol", String(usuarioData.idRol || ""))
+        setValue("idEstado", String(usuarioData.idEstado || ""))
+        setSelectedRol(String(usuarioData.idRol || ""))
       } catch (error) {
         toast({
           variant: "destructive",
@@ -88,7 +88,8 @@ export default function EditarUsuarioPage() {
 
   const isMedico = () => {
     const rol = roles.find((r) => r.idRol === Number(selectedRol))
-    return rol?.nombreRol.toLowerCase() === "medico" || rol?.nombreRol.toLowerCase() === "médico"
+    const nombreRol = rol?.nombreRol?.toLowerCase?.() || ""
+    return nombreRol === "medico" || nombreRol === "médico"
   }
 
   const onSubmit = async (data: EditUserFormData) => {
