@@ -69,10 +69,15 @@ export default function ConfiguracionPage() {
     if (!user) return
     try {
       const [allTelefonos, allCorreos] = await Promise.all([api.getTelefonos(), api.getCorreos()])
-      setTelefonos(allTelefonos.filter((t) => t.idUsuario === user.idUsuario))
-      setCorreos(allCorreos.filter((c) => c.idUsuario === user.idUsuario))
-    } catch (error) {
-      console.error("Error loading contact data:", error)
+      setTelefonos(allTelefonos.filter((t) => t.usuario?.idUsuario === user.idUsuario || t.idUsuario === user.idUsuario))
+      setCorreos(allCorreos.filter((c) => c.usuario?.idUsuario === user.idUsuario || c.idUsuario === user.idUsuario))
+    } catch (error: unknown) {
+      const err = error as { message?: string; mensaje?: string; status?: number }
+      console.error("Error loading contact data:", {
+        message: err.message || err.mensaje || "Error desconocido",
+        status: err.status,
+        fullError: error,
+      })
     } finally {
       setIsLoading(false)
     }
@@ -126,7 +131,10 @@ export default function ConfiguracionPage() {
   const handleAddTelefono = async () => {
     if (!user || !addTelefono.trim()) return
     try {
-      await api.crearTelefono({ numero: addTelefono, idUsuario: user.idUsuario })
+      await api.crearTelefono({ 
+        numero: addTelefono, 
+        usuario: { idUsuario: user.idUsuario }
+      })
       toast({ title: "Teléfono agregado" })
       setAddTelefono("")
       loadContactData()
@@ -138,7 +146,10 @@ export default function ConfiguracionPage() {
   const handleAddCorreo = async () => {
     if (!user || !addCorreo.trim()) return
     try {
-      await api.crearCorreo({ correo: addCorreo, idUsuario: user.idUsuario })
+      await api.crearCorreo({ 
+        correo: addCorreo, 
+        usuario: { idUsuario: user.idUsuario }
+      })
       toast({ title: "Correo agregado" })
       setAddCorreo("")
       loadContactData()
@@ -257,13 +268,13 @@ export default function ConfiguracionPage() {
                   <p className="text-sm text-muted-foreground text-center py-4">No hay teléfonos registrados</p>
                 ) : (
                   <div className="space-y-2">
-                    {telefonos.map((tel) => (
-                      <div key={tel.idTelefono} className="flex items-center justify-between p-3 rounded-lg border">
+                    {telefonos.map((tel, idx) => (
+                      <div key={tel.idTelefono || idx} className="flex items-center justify-between p-3 rounded-lg border">
                         <span>{tel.numero}</span>
                         <Button
                           variant="ghost"
                           size="icon"
-                          onClick={() => setDeleteDialog({ open: true, type: "telefono", id: tel.idTelefono })}
+                          onClick={() => setDeleteDialog({ open: true, type: "telefono", id: tel.idTelefono || 0 })}
                         >
                           <Trash2 className="h-4 w-4 text-destructive" />
                         </Button>
@@ -302,13 +313,13 @@ export default function ConfiguracionPage() {
                   </p>
                 ) : (
                   <div className="space-y-2">
-                    {correos.map((corr) => (
-                      <div key={corr.idCorreo} className="flex items-center justify-between p-3 rounded-lg border">
+                    {correos.map((corr, idx) => (
+                      <div key={corr.idCorreo || idx} className="flex items-center justify-between p-3 rounded-lg border">
                         <span>{corr.correo}</span>
                         <Button
                           variant="ghost"
                           size="icon"
-                          onClick={() => setDeleteDialog({ open: true, type: "correo", id: corr.idCorreo })}
+                          onClick={() => setDeleteDialog({ open: true, type: "correo", id: corr.idCorreo || 0 })}
                         >
                           <Trash2 className="h-4 w-4 text-destructive" />
                         </Button>

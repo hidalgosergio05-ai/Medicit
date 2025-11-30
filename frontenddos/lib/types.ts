@@ -73,15 +73,17 @@ export interface PreguntaRespuesta {
 }
 
 export interface Telefono {
-  idTelefono: number
+  idTelefono?: number
   numero: string
-  idUsuario: number
+  usuario: { idUsuario: number }
+  idUsuario?: number
 }
 
 export interface Correo {
-  idCorreo: number
+  idCorreo?: number
   correo: string
-  idUsuario: number
+  usuario: { idUsuario: number }
+  idUsuario?: number
 }
 
 export interface Antecedente {

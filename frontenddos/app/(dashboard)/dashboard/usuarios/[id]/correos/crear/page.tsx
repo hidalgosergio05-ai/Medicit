@@ -36,7 +36,7 @@ export default function CrearCorreoPage() {
     try {
       await api.crearCorreo({
         correo: data.correo,
-        idUsuario: userId,
+        usuario: { idUsuario: userId },
       })
       toast({
         title: "Correo agregado",

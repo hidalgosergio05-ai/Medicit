@@ -13,6 +13,8 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Entidad JPA que representa la tabla `correos`.
@@ -30,8 +32,10 @@ public class Correos {
     @Column(name = "id_correo")
     private Integer idCorreo;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "usuario_id", referencedColumnName = "id_usuario", nullable = false)
+    @JsonIgnore(false)
+    @JsonProperty("usuario")
     private Usuarios usuario;
 
     @Column(name = "correo", length = 100, nullable = false, unique = true)

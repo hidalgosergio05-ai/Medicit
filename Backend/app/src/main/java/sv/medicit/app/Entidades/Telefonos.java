@@ -13,6 +13,9 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
 
 /**
  * Entidad JPA que representa la tabla `telefonos`.
@@ -30,10 +33,13 @@ public class Telefonos {
     @Column(name = "id_telefono")
     private Integer idTelefono;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "usuario_id", referencedColumnName = "id_usuario", nullable = false)
+    @JsonIgnore(false)
+    @JsonProperty("usuario")
     private Usuarios usuario;
 
-    @Column(name = "telefono", length = 8, nullable = false)
+    @Column(name = "telefono", length = 9, nullable = false)
+    @JsonProperty("numero")
     private String telefono;
 }

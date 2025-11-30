@@ -36,7 +36,7 @@ export default function CrearTelefonoPage() {
     try {
       await api.crearTelefono({
         numero: data.numero,
-        idUsuario: userId,
+        usuario: { idUsuario: userId },
       })
       toast({
         title: "Teléfono agregado",

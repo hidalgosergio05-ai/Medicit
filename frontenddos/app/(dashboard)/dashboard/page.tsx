@@ -85,8 +85,13 @@ export default function DashboardPage() {
           .slice(0, 5)
 
         setRecentCitas(upcoming)
-      } catch (error) {
+      } catch (error: unknown) {
         console.error("Error loading dashboard:", error)
+        const err = error as { message?: string; mensaje?: string; status?: number }
+        console.error("Error details:", {
+          message: err.message || err.mensaje || "Error desconocido",
+          status: err.status,
+        })
       } finally {
         setIsLoading(false)
       }
