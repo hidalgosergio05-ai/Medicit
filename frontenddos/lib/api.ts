@@ -154,14 +154,14 @@ class ApiService {
   async crearRol(nombreRol: string): Promise<Rol> {
     return this.request<Rol>("/roles", {
       method: "POST",
-      body: JSON.stringify({ nombreRol }),
+      body: JSON.stringify({ nombreRol, descripcion: "ninguno" }),
     })
   }
 
   async actualizarRol(id: number, nombreRol: string): Promise<Rol> {
     return this.request<Rol>(`/roles/${id}`, {
       method: "PUT",
-      body: JSON.stringify({ nombreRol }),
+      body: JSON.stringify({ nombreRol, descripcion: "ninguno" }),
     })
   }
 

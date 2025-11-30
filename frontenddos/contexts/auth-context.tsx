@@ -57,7 +57,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const getPermiso = useCallback(
     (modulo: string) => {
       if (!user?.permisos) return null
-      return user.permisos[modulo] || null
+      // Convertir de snake_case a camelCase si es necesario
+      const moduloKey = modulo
+        .toLowerCase()
+        .replace(/_([a-z])/g, (_, char) => char.toUpperCase())
+      return user.permisos[moduloKey] || null
     },
     [user],
   )
