@@ -168,12 +168,7 @@ public class CitasRestController {
     public ResponseEntity<?> obtenerCitasPorPaciente(@PathVariable Integer idPaciente) {
         try {
             List<CitaSimpleDTO> citas = citasService.obtenerCitasPorPaciente(idPaciente);
-            if (citas.isEmpty()) {
-                return new ResponseEntity<>(
-                    new ErrorResponse("No encontrado", "El paciente no tiene citas registradas"),
-                    HttpStatus.NOT_FOUND
-                );
-            }
+            // Retornar array vacío con OK en lugar de NOT_FOUND
             return new ResponseEntity<>(citas, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(
@@ -191,12 +186,7 @@ public class CitasRestController {
     public ResponseEntity<?> obtenerCitasPorMedico(@PathVariable Integer idMedico) {
         try {
             List<CitaSimpleDTO> citas = citasService.obtenerCitasPorMedico(idMedico);
-            if (citas.isEmpty()) {
-                return new ResponseEntity<>(
-                    new ErrorResponse("No encontrado", "El médico no tiene citas registradas"),
-                    HttpStatus.NOT_FOUND
-                );
-            }
+            // Retornar array vacío con OK en lugar de NOT_FOUND
             return new ResponseEntity<>(citas, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(

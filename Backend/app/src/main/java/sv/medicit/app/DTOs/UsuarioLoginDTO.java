@@ -25,8 +25,11 @@ public class UsuarioLoginDTO {
 
     private String contrasenia;
 
+    private String correo;
+
     private String nombreRol;
 
     private Integer idRol;
 
 }
+

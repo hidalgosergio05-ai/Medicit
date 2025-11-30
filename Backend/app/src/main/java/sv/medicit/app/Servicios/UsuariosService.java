@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import sv.medicit.app.DTOs.UsuarioCreacionDTO;
+import sv.medicit.app.DTOs.UsuarioDTO;
 import sv.medicit.app.DTOs.UsuarioLoginDTO;
 import sv.medicit.app.Entidades.Contrasenias;
 import sv.medicit.app.Entidades.Correos;
@@ -379,5 +380,56 @@ public class UsuariosService {
      */
     public Optional<UsuarioLoginDTO> obtenerUsuarioPorLogin(String nombreUsuario) {
         return usuariosRepository.obtenerUsuarioPorLogin(nombreUsuario);
+    }
+
+    /**
+     * Obtener el correo principal de un usuario.
+     * El correo principal es el primero en la lista de correos asociados.
+     */
+    private String obtenerCorreoDelUsuario(Integer idUsuario) {
+        List<Correos> correos = correosRepository.findAll();
+        for (Correos c : correos) {
+            if (c.getUsuario() != null && c.getUsuario().getIdUsuario().equals(idUsuario)) {
+                return c.getCorreo();
+            }
+        }
+        return null; // Si no hay correo, retorna null
+    }
+
+    /**
+     * Convertir una entidad Usuarios a UsuarioDTO con correo incluido.
+     */
+    private UsuarioDTO usuarioADTO(Usuarios usuario) {
+        String correo = obtenerCorreoDelUsuario(usuario.getIdUsuario());
+        return new UsuarioDTO(
+            usuario.getIdUsuario(),
+            usuario.getNombreUsuario(),
+            usuario.getNombres(),
+            usuario.getApellidos(),
+            usuario.getDui(),
+            usuario.getFechaNacimiento(),
+            correo,
+            usuario.getRol(),
+            usuario.getEstado(),
+            usuario.getEspecialidades()
+        );
+    }
+
+    /**
+     * Obtener todos los usuarios con correo (como DTOs).
+     */
+    public List<UsuarioDTO> obtenerTodosConCorreo() {
+        List<Usuarios> usuarios = usuariosRepository.findAll();
+        return usuarios.stream()
+            .map(this::usuarioADTO)
+            .toList();
+    }
+
+    /**
+     * Obtener un usuario por ID con correo (como DTO).
+     */
+    public Optional<UsuarioDTO> obtenerPorIdConCorreo(Integer id) {
+        Optional<Usuarios> usuario = usuariosRepository.findById(id);
+        return usuario.map(this::usuarioADTO);
     }
 }

@@ -27,9 +27,10 @@ public interface UsuariosRepository extends JpaRepository<Usuarios, Integer> {
      */
     @Query("SELECT new sv.medicit.app.DTOs.UsuarioLoginDTO(" +
            "u.idUsuario, u.nombreUsuario, u.nombres, u.apellidos, u.dui, " +
-           "c.contrasenia, r.nombreRol, r.idRol) " +
+           "c.contrasenia, co.correo, r.nombreRol, r.idRol) " +
            "FROM Usuarios u " +
            "LEFT JOIN Contrasenias c ON u.idUsuario = c.usuario.idUsuario " +
+           "LEFT JOIN Correos co ON u.idUsuario = co.usuario.idUsuario " +
            "LEFT JOIN Roles r ON u.rol.idRol = r.idRol " +
            "WHERE u.nombreUsuario = :nombreUsuario")
     Optional<UsuarioLoginDTO> obtenerUsuarioPorLogin(@Param("nombreUsuario") String nombreUsuario);

@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import sv.medicit.app.DTOs.UsuarioCreacionDTO;
+import sv.medicit.app.DTOs.UsuarioDTO;
 import sv.medicit.app.DTOs.UsuarioLoginDTO;
 import sv.medicit.app.Entidades.Usuarios;
 import sv.medicit.app.Servicios.UsuariosService;
@@ -36,21 +37,21 @@ public class UsuariosRestController {
 
     /**
      * GET /api/usuarios
-     * Obtener todos los usuarios.
+     * Obtener todos los usuarios con correo incluido.
      */
     @GetMapping
-    public ResponseEntity<List<Usuarios>> obtenerTodos() {
-        List<Usuarios> usuarios = usuariosService.obtenerTodos();
+    public ResponseEntity<List<UsuarioDTO>> obtenerTodos() {
+        List<UsuarioDTO> usuarios = usuariosService.obtenerTodosConCorreo();
         return new ResponseEntity<>(usuarios, HttpStatus.OK);
     }
 
     /**
      * GET /api/usuarios/{id}
-     * Obtener un usuario por ID.
+     * Obtener un usuario por ID con correo incluido.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<Usuarios> obtenerPorId(@PathVariable Integer id) {
-        Optional<Usuarios> usuario = usuariosService.obtenerPorId(id);
+    public ResponseEntity<UsuarioDTO> obtenerPorId(@PathVariable Integer id) {
+        Optional<UsuarioDTO> usuario = usuariosService.obtenerPorIdConCorreo(id);
         if (usuario.isPresent()) {
             return new ResponseEntity<>(usuario.get(), HttpStatus.OK);
         } else {

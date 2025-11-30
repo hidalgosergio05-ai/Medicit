@@ -61,15 +61,29 @@ export default function UsuarioDetailPage() {
         // Load role-specific data
         const rolNombre = getNombreRol(usuarioData).toLowerCase()
         if (rolNombre === "paciente") {
-          const [allAntecedentes, citasPaciente] = await Promise.all([
-            api.getAntecedentes(),
-            api.getCitasPorPaciente(userId),
-          ])
-          setAntecedentes(allAntecedentes.filter((a) => a.idPaciente === userId))
-          setCitas(citasPaciente)
+          try {
+            const allAntecedentes = await api.getAntecedentes()
+            setAntecedentes(allAntecedentes.filter((a) => a.idPaciente === userId))
+          } catch (error) {
+            console.error("Error loading antecedentes:", error)
+            setAntecedentes([])
+          }
+
+          try {
+            const citasPaciente = await api.getCitasPorPaciente(userId)
+            setCitas(citasPaciente || [])
+          } catch (error) {
+            console.error("Error loading citas for paciente:", error)
+            setCitas([])
+          }
         } else if (rolNombre === "medico" || rolNombre === "médico") {
-          const citasMedico = await api.getCitasPorMedico(userId)
-          setCitas(citasMedico)
+          try {
+            const citasMedico = await api.getCitasPorMedico(userId)
+            setCitas(citasMedico || [])
+          } catch (error) {
+            console.error("Error loading citas for medico:", error)
+            setCitas([])
+          }
         }
       } catch (error) {
         toast({
