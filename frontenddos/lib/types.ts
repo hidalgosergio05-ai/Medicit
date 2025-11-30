@@ -1,0 +1,160 @@
+// ==================== TIPOS BASE ====================
+export interface Usuario {
+  idUsuario: number
+  nombreUsuario: string
+  nombres: string
+  apellidos: string
+  correo: string
+  dui?: string
+  fechaNacimiento?: string
+  idRol: number
+  nombreRol: string
+  idEstado: number
+  nombreEstado: string
+}
+
+export interface PermisoModulo {
+  ver: boolean
+  crear: boolean
+  editar: boolean
+  eliminar: boolean
+  descargar: boolean
+}
+
+export interface Permisos {
+  modulo_usuarios?: PermisoModulo
+  modulo_citas?: PermisoModulo
+  modulo_medico?: PermisoModulo
+  modulo_administrativo?: PermisoModulo
+  modulo_catalogos?: PermisoModulo
+  modulo_configuracion?: PermisoModulo
+  [key: string]: PermisoModulo | undefined
+}
+
+export interface UserData extends Usuario {
+  permisos: Permisos
+}
+
+// ==================== ENTIDADES ====================
+export interface Rol {
+  idRol: number
+  nombreRol: string
+}
+
+export interface Estado {
+  idEstado: number
+  nombreEstado: string
+}
+
+export interface Especialidad {
+  idEspecialidad: number
+  nombreEspecialidad: string
+}
+
+export interface Pregunta {
+  idPregunta: number
+  pregunta: string
+}
+
+export interface Respuesta {
+  idRespuesta: number
+  respuesta: string
+  idPregunta: number
+  idUsuario: number
+}
+
+export interface PreguntaRespuesta {
+  idPregunta: number
+  respuesta: string
+}
+
+export interface Telefono {
+  idTelefono: number
+  numero: string
+  idUsuario: number
+}
+
+export interface Correo {
+  idCorreo: number
+  correo: string
+  idUsuario: number
+}
+
+export interface Antecedente {
+  idAntecedente: number
+  descripcion: string
+  tipo?: string
+  idPaciente: number
+  paciente?: Usuario
+}
+
+export interface Cita {
+  idCita: number
+  fechaHora: string
+  motivo: string
+  paciente: Usuario
+  medico: Usuario
+  estado: Estado
+}
+
+export interface Permiso {
+  idPermiso: number
+  idRol: number
+  nombreRol?: string
+  modulo: string
+  ver: boolean
+  crear: boolean
+  editar: boolean
+  eliminar: boolean
+  descargar: boolean
+}
+
+// ==================== PAYLOADS ====================
+export interface LoginPayload {
+  nombreUsuario: string
+  contrasenia: string
+}
+
+export interface CrearUsuarioCompletoPayload {
+  nombreUsuario: string
+  contrasenia: string
+  nombres: string
+  apellidos: string
+  dui: string
+  fechaNacimiento: string
+  correo: string
+  telefono: string
+  idRol: number
+  idEstado: number
+  especialidades?: number[]
+  preguntasRespuestas?: PreguntaRespuesta[]
+}
+
+export interface ActualizarUsuarioPayload {
+  nombreUsuario?: string
+  nombres?: string
+  apellidos?: string
+  correo?: string
+  idRol?: number
+  idEstado?: number
+}
+
+export interface CrearCitaPayload {
+  paciente: { idUsuario: number }
+  medico: { idUsuario: number }
+  fechaHora: string
+  motivo: string
+  estado: { idEstado: number }
+}
+
+export interface ActualizarCitaPayload {
+  fechaHora?: string
+  motivo?: string
+  estado?: { idEstado: number }
+}
+
+// ==================== RESPUESTAS API ====================
+export interface ApiError {
+  message: string
+  errors?: Record<string, string[]>
+}
