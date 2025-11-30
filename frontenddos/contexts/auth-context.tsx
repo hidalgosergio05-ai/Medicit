@@ -23,7 +23,6 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 const STORAGE_KEY = "medicit_user"
-const TOKEN_KEY = "medicit_token"
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<UserData | null>(null)
@@ -33,7 +32,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const stored = localStorage.getItem(STORAGE_KEY)
     if (stored) {
       try {
-        setUser(JSON.parse(stored))
+        const userData = JSON.parse(stored)
+        console.log("User recuperado del localStorage:", userData)
+        setUser(userData)
       } catch {
         localStorage.removeItem(STORAGE_KEY)
       }
@@ -43,20 +44,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = useCallback(async (payload: LoginPayload) => {
     const response = await api.login(payload)
-    const userData = response.userData || response
-    setUser(userData)
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(userData))
-    
-    // Guardar token si viene en la respuesta
-    if ((response as any).token) {
-      localStorage.setItem(TOKEN_KEY, (response as any).token)
-    }
+    console.log("Login response:", response)
+    setUser(response)
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(response))
   }, [])
 
   const logout = useCallback(() => {
     setUser(null)
     localStorage.removeItem(STORAGE_KEY)
-    localStorage.removeItem(TOKEN_KEY)
   }, [])
 
   const getPermiso = useCallback(

@@ -22,6 +22,25 @@ import type {
 const BASE_URL = "http://localhost:80/api"
 const TOKEN_KEY = "medicit_token"
 
+// Función para convertir snake_case a camelCase
+function snakeToCamel(str: string): string {
+  return str.replace(/_([a-z])/g, (match, letter) => letter.toUpperCase())
+}
+
+// Función recursiva para convertir las claves de un objeto
+function convertKeysToCamel(obj: any): any {
+  if (Array.isArray(obj)) {
+    return obj.map(convertKeysToCamel)
+  } else if (obj !== null && obj.constructor === Object) {
+    return Object.keys(obj).reduce((acc, key) => {
+      const camelKey = snakeToCamel(key)
+      acc[camelKey] = convertKeysToCamel(obj[key])
+      return acc
+    }, {} as any)
+  }
+  return obj
+}
+
 class ApiService {
   private getToken(): string | null {
     if (typeof window === "undefined") return null
@@ -63,10 +82,13 @@ class ApiService {
 
   // ==================== AUTH ====================
   async login(payload: LoginPayload): Promise<UserData> {
-    return this.request<UserData>("/auth/login", {
+    const response = await this.request<any>("/auth/login", {
       method: "POST",
       body: JSON.stringify(payload),
     })
+    // Si viene envuelto en userData, extrae eso y convierte
+    const userData = response.userData || response
+    return convertKeysToCamel(userData) as UserData
   }
 
   // ==================== USUARIOS ====================

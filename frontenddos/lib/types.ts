@@ -9,8 +9,8 @@ export interface Usuario {
   fechaNacimiento?: string
   idRol: number
   nombreRol: string
-  idEstado: number
-  nombreEstado: string
+  idEstado?: number
+  nombreEstado?: string
 }
 
 export interface PermisoModulo {
@@ -28,6 +28,8 @@ export interface Permisos {
   modulo_administrativo?: PermisoModulo
   modulo_catalogos?: PermisoModulo
   modulo_configuracion?: PermisoModulo
+  modulo_dashboard?: PermisoModulo
+  modulo_inicio?: PermisoModulo
   [key: string]: PermisoModulo | undefined
 }
 
