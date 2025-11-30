@@ -33,8 +33,30 @@ export default function DashboardPage() {
 
         if (isPaciente()) {
           citas = await api.getCitasPorPaciente(user!.idUsuario)
+          // Stats for paciente
+          const today = new Date().toDateString()
+          const citasHoy = citas.filter((c) => new Date(c.fechaHora).toDateString() === today).length
+          const citasPendientes = citas.filter((c) => (c.estadoCita || c.estado?.estado || c.estado?.nombreEstado || "").toLowerCase() === "pendiente").length
+
+          setStats({
+            totalUsuarios: 0,
+            totalCitas: citas.length,
+            citasPendientes,
+            citasHoy,
+          })
         } else if (isMedico()) {
           citas = await api.getCitasPorMedico(user!.idUsuario)
+          // Stats for médico
+          const today = new Date().toDateString()
+          const citasHoy = citas.filter((c) => new Date(c.fechaHora).toDateString() === today).length
+          const citasPendientes = citas.filter((c) => (c.estadoCita || c.estado?.estado || c.estado?.nombreEstado || "").toLowerCase() === "pendiente").length
+
+          setStats({
+            totalUsuarios: 0,
+            totalCitas: citas.length,
+            citasPendientes,
+            citasHoy,
+          })
         } else {
           // Admin or receptionist sees all
           const [usuarios, allCitas] = await Promise.all([api.getUsuarios(), api.getCitas()])
@@ -42,7 +64,7 @@ export default function DashboardPage() {
 
           const today = new Date().toDateString()
           const citasHoy = citas.filter((c) => new Date(c.fechaHora).toDateString() === today).length
-          const citasPendientes = citas.filter((c) => c.estado.nombreEstado.toLowerCase() === "pendiente").length
+          const citasPendientes = citas.filter((c) => (c.estadoCita || c.estado?.estado || c.estado?.nombreEstado || "").toLowerCase() === "pendiente").length
 
           setStats({
             totalUsuarios: usuarios.length,
@@ -55,7 +77,10 @@ export default function DashboardPage() {
         // Get recent/upcoming appointments
         const now = new Date()
         const upcoming = citas
-          .filter((c) => new Date(c.fechaHora) >= now)
+          .filter((c) => {
+            const citaDate = new Date(c.fechaHora)
+            return citaDate >= now && (c.estadoCita || c.estado?.estado || c.estado?.nombreEstado || "").toLowerCase() !== "cancelada"
+          })
           .sort((a, b) => new Date(a.fechaHora).getTime() - new Date(b.fechaHora).getTime())
           .slice(0, 5)
 
@@ -85,18 +110,20 @@ export default function DashboardPage() {
           </p>
         </div>
 
-        {/* Stats Cards - Only for Admin */}
-        {isAdmin() && stats && (
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Usuarios</CardTitle>
-                <Users className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{stats.totalUsuarios}</div>
-              </CardContent>
-            </Card>
+        {/* Stats Cards - For everyone */}
+        {stats && (
+          <div className={`grid gap-4 ${isAdmin() ? "md:grid-cols-2 lg:grid-cols-4" : "md:grid-cols-2 lg:grid-cols-3"}`}>
+            {isAdmin() && (
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Total Usuarios</CardTitle>
+                  <Users className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{stats.totalUsuarios}</div>
+                </CardContent>
+              </Card>
+            )}
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Total Citas</CardTitle>
@@ -241,13 +268,13 @@ export default function DashboardPage() {
                     <div className="space-y-1">
                       <p className="font-medium">
                         {isPaciente()
-                          ? `Dr. ${cita.medico.nombres} ${cita.medico.apellidos}`
-                          : `${cita.paciente.nombres} ${cita.paciente.apellidos}`}
+                          ? `Dr. ${cita.nombreMedico || `${cita.medico?.nombres} ${cita.medico?.apellidos}`}`
+                          : `${cita.nombrePaciente || `${cita.paciente?.nombres} ${cita.paciente?.apellidos}`}`}
                       </p>
                       <p className="text-sm text-muted-foreground">{cita.motivo}</p>
                       <p className="text-sm text-muted-foreground">{formatDateTime(cita.fechaHora)}</p>
                     </div>
-                    <StatusBadge status={cita.estado.nombreEstado} />
+                    <StatusBadge status={cita.estadoCita || cita.estado?.estado || cita.estado?.nombreEstado || "Desconocido"} />
                   </div>
                 ))}
                 <Button variant="outline" className="w-full bg-transparent" asChild>

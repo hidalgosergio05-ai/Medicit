@@ -28,8 +28,8 @@ public interface CitasRepository extends JpaRepository<Citas, Integer> {
      * Retorna solo los datos necesarios sin incluir objetos completos de Usuario.
      */
     @Query("SELECT new sv.medicit.app.DTOs.CitaSimpleDTO(" +
-           "c.idCita, c.paciente.idUsuario, c.paciente.nombres, " +
-           "c.medico.idUsuario, c.medico.nombres, c.fechaHora, c.motivo, c.estado.estado) " +
+           "c.idCita, c.paciente.idUsuario, CONCAT(c.paciente.nombres, ' ', c.paciente.apellidos), " +
+           "c.medico.idUsuario, CONCAT(c.medico.nombres, ' ', c.medico.apellidos), c.fechaHora, c.motivo, c.estado.estado) " +
            "FROM Citas c WHERE c.paciente.idUsuario = :idPaciente")
     List<CitaSimpleDTO> obtenerCitasPacienteSimplificadas(@Param("idPaciente") Integer idPaciente);
     
@@ -38,8 +38,8 @@ public interface CitasRepository extends JpaRepository<Citas, Integer> {
      * Retorna solo los datos necesarios sin incluir objetos completos de Usuario.
      */
     @Query("SELECT new sv.medicit.app.DTOs.CitaSimpleDTO(" +
-           "c.idCita, c.paciente.idUsuario, c.paciente.nombres, " +
-           "c.medico.idUsuario, c.medico.nombres, c.fechaHora, c.motivo, c.estado.estado) " +
+           "c.idCita, c.paciente.idUsuario, CONCAT(c.paciente.nombres, ' ', c.paciente.apellidos), " +
+           "c.medico.idUsuario, CONCAT(c.medico.nombres, ' ', c.medico.apellidos), c.fechaHora, c.motivo, c.estado.estado) " +
            "FROM Citas c WHERE c.medico.idUsuario = :idMedico")
     List<CitaSimpleDTO> obtenerCitasMedicoSimplificadas(@Param("idMedico") Integer idMedico);
 }

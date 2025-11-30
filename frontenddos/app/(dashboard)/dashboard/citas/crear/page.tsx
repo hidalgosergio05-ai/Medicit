@@ -80,7 +80,9 @@ export default function CrearCitaPage() {
     setIsSubmitting(true)
 
     // Get "Pendiente" state
-    const estadoPendiente = estados.find((e) => e.nombreEstado.toLowerCase() === "pendiente")
+    const estadoPendiente = estados.find(
+      (e) => (e.estado?.toLowerCase?.() || e.nombreEstado?.toLowerCase?.() || "").includes("pendiente"),
+    )
 
     if (!estadoPendiente) {
       toast({
@@ -94,6 +96,27 @@ export default function CrearCitaPage() {
 
     try {
       const pacienteId = isPaciente() ? user!.idUsuario : Number(data.idPaciente)
+
+      // Validate required fields
+      if (!data.idMedico) {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Debes seleccionar un médico",
+        })
+        setIsSubmitting(false)
+        return
+      }
+
+      if (isAdmin() && !data.idPaciente) {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Debes seleccionar un paciente",
+        })
+        setIsSubmitting(false)
+        return
+      }
 
       await api.crearCita({
         paciente: { idUsuario: pacienteId },
@@ -109,11 +132,11 @@ export default function CrearCitaPage() {
       })
       router.push("/dashboard/citas")
     } catch (error: unknown) {
-      const err = error as { message?: string }
+      const err = error as { message?: string; mensaje?: string; status?: number }
       toast({
         variant: "destructive",
         title: "Error",
-        description: err.message || "No se pudo crear la cita",
+        description: err.mensaje || err.message || "No se pudo crear la cita",
       })
     } finally {
       setIsSubmitting(false)

@@ -80,10 +80,11 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
 
   const onSubmit = async (data: RegisterFormData) => {
     setIsSubmitting(true)
+ 
     try {
       // Find Paciente role and Activo state
-      const rolPaciente = roles.find((r) => r.nombreRol.toLowerCase() === "paciente")
-      const estadoActivo = estados.find((e) => e.nombreEstado.toLowerCase() === "activo")
+      const rolPaciente = roles.find((r) => r.idRol === 1)
+      const estadoActivo = estados.find((e) => e.idEstado === 1)
 
       if (!rolPaciente) {
         throw new Error("No se encontró el rol de Paciente")
@@ -91,7 +92,7 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
       if (!estadoActivo) {
         throw new Error("No se encontró el estado Activo")
       }
-
+      
       await api.crearUsuarioCompleto({
         nombreUsuario: data.nombreUsuario,
         contrasenia: data.contrasenia,
@@ -112,15 +113,22 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
       })
       onSuccess(data.nombreUsuario)
     } catch (error: unknown) {
-      const err = error as { message?: string; status?: number }
+      const err = error as { 
+        message?: string
+        status?: number
+        tipo?: string
+        mensaje?: string
+      }
       let errorMessage = "Ha ocurrido un error al registrarte"
-
-      if (err.status === 409) {
-        errorMessage = "El usuario, correo o DUI ya existe"
+      
+      // Extraer mensaje del backend si está disponible
+      if (err.mensaje) {
+        errorMessage = err.mensaje
       } else if (err.message) {
         errorMessage = err.message
+      } else if (err.status === 409 || err.status === 400) {
+        errorMessage = "Los datos ingresados ya existen o son inválidos"
       }
-
       toast({
         variant: "destructive",
         title: "Error de registro",

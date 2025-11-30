@@ -31,7 +31,7 @@ export default function LoginPage() {
         <Card className="shadow-lg">
           <CardHeader className="text-center pb-2">
             <CardTitle className="text-xl">Bienvenido</CardTitle>
-            <CardDescription>Sistema de gestión de citas médicas</CardDescription>
+            <CardDescription>Sistema de gestión de citas médicas - grupo 9</CardDescription>
           </CardHeader>
           <CardContent>
             <Tabs value={activeTab} onValueChange={setActiveTab}>

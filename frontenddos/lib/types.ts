@@ -43,7 +43,9 @@ export interface Rol {
 
 export interface Estado {
   idEstado: number
-  nombreEstado: string
+  estado: string
+  nombreEstado?: string
+  descripcion?: string
 }
 
 export interface Especialidad {
@@ -92,9 +94,16 @@ export interface Cita {
   idCita: number
   fechaHora: string
   motivo: string
-  paciente: Usuario
-  medico: Usuario
-  estado: Estado
+  // Respuesta flat del backend
+  idPaciente?: number
+  nombrePaciente?: string
+  idMedico?: number
+  nombreMedico?: string
+  estadoCita?: string
+  // Respuesta con objetos anidados (compatibilidad)
+  paciente?: Usuario
+  medico?: Usuario
+  estado?: Estado
 }
 
 export interface Permiso {

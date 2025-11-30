@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({ subsets: ["latin"], variable: "--font-mono" })
 
 export const metadata: Metadata = {
   title: "Medicit - Gestión de Citas Médicas",
-  description: "Sistema de gestión de citas médicas para pacientes, médicos y administradores",
+  description: "Sistema de gestión de citas médicas - grupo 9",
   keywords: ["citas médicas", "gestión médica", "salud", "consultas"],
     generator: 'v0.app'
 }

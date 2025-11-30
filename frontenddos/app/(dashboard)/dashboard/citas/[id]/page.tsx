@@ -54,7 +54,7 @@ export default function CitaDetailPage() {
   }, [citaId, router, toast])
 
   const getEstadoId = (nombreEstado: string) => {
-    const estado = estados.find((e) => e.nombreEstado.toLowerCase() === nombreEstado.toLowerCase())
+    const estado = estados.find((e) => (e.estado || e.nombreEstado || "").toLowerCase() === nombreEstado.toLowerCase())
     return estado?.idEstado
   }
 
@@ -77,7 +77,11 @@ export default function CitaDetailPage() {
       const updatedCita = await api.actualizarCita(cita.idCita, {
         estado: { idEstado: estadoId },
       })
-      setCita({ ...cita, estado: { ...cita.estado, idEstado: estadoId, nombreEstado: nuevoEstado } })
+      setCita({ 
+        ...cita, 
+        estadoCita: nuevoEstado,
+        estado: cita.estado ? { ...cita.estado, idEstado: estadoId, nombreEstado: nuevoEstado } : undefined
+      })
       toast({
         title: "Cita actualizada",
         description: `La cita ha sido ${nuevoEstado.toLowerCase()}`,
@@ -132,8 +136,8 @@ export default function CitaDetailPage() {
     )
   }
 
-  const isPending = cita.estado.nombreEstado.toLowerCase() === "pendiente"
-  const canCancel = isPending || cita.estado.nombreEstado.toLowerCase() === "aceptada"
+  const isPending = (cita.estadoCita || cita.estado?.estado || cita.estado?.nombreEstado || "").toLowerCase() === "pendiente"
+  const canCancel = isPending || (cita.estadoCita || cita.estado?.estado || cita.estado?.nombreEstado || "").toLowerCase() === "aceptada"
 
   return (
     <DashboardLayout title="Detalle de Cita">
@@ -151,7 +155,7 @@ export default function CitaDetailPage() {
               <p className="text-muted-foreground">{formatDateTime(cita.fechaHora)}</p>
             </div>
           </div>
-          <StatusBadge status={cita.estado.nombreEstado} />
+          <StatusBadge status={cita.estadoCita || cita.estado?.estado || cita.estado?.nombreEstado || "Desconocido"} />
         </div>
 
         {/* Main Info */}
@@ -169,19 +173,19 @@ export default function CitaDetailPage() {
                 <div>
                   <dt className="text-sm font-medium text-muted-foreground">Nombre</dt>
                   <dd>
-                    {cita.paciente.nombres} {cita.paciente.apellidos}
+                    {cita.nombrePaciente || `${cita.paciente?.nombres} ${cita.paciente?.apellidos}`}
                   </dd>
                 </div>
                 <div>
                   <dt className="text-sm font-medium text-muted-foreground">Usuario</dt>
-                  <dd>@{cita.paciente.nombreUsuario}</dd>
+                  <dd>@{cita.paciente?.nombreUsuario || "N/A"}</dd>
                 </div>
                 <div>
                   <dt className="text-sm font-medium text-muted-foreground">Correo</dt>
-                  <dd>{cita.paciente.correo}</dd>
+                  <dd>{cita.paciente?.correo || "N/A"}</dd>
                 </div>
               </dl>
-              {(isMedico() || isAdmin()) && (
+              {(isMedico() || isAdmin()) && cita.paciente && (
                 <Button variant="outline" size="sm" className="mt-4 bg-transparent" asChild>
                   <Link href={`/dashboard/usuarios/${cita.paciente.idUsuario}`}>Ver perfil del paciente</Link>
                 </Button>
@@ -202,16 +206,16 @@ export default function CitaDetailPage() {
                 <div>
                   <dt className="text-sm font-medium text-muted-foreground">Nombre</dt>
                   <dd>
-                    Dr. {cita.medico.nombres} {cita.medico.apellidos}
+                    Dr. {cita.nombreMedico || `${cita.medico?.nombres} ${cita.medico?.apellidos}`}
                   </dd>
                 </div>
                 <div>
                   <dt className="text-sm font-medium text-muted-foreground">Usuario</dt>
-                  <dd>@{cita.medico.nombreUsuario}</dd>
+                  <dd>@{cita.medico?.nombreUsuario || "N/A"}</dd>
                 </div>
                 <div>
                   <dt className="text-sm font-medium text-muted-foreground">Correo</dt>
-                  <dd>{cita.medico.correo}</dd>
+                  <dd>{cita.medico?.correo || "N/A"}</dd>
                 </div>
               </dl>
             </CardContent>

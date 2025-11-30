@@ -20,6 +20,12 @@ export default function CitasPage() {
   const { user, isPaciente, isMedico, isAdmin, canCreate, canEdit, canDelete } = useAuth()
   const { toast } = useToast()
 
+  // Debug logs
+  console.log("useAuth() completo:", { user, isPaciente: isPaciente(), isMedico: isMedico(), isAdmin: isAdmin() })
+  console.log("Es paciente?", isPaciente())
+  console.log("Es médico?", isMedico())
+  console.log("Es admin?", isAdmin())
+
   const [citas, setCitas] = useState<Cita[]>([])
   const [estados, setEstados] = useState<Estado[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -36,35 +42,47 @@ export default function CitasPage() {
   const loadCitas = async () => {
     try {
       let data: Cita[] = []
-
+      
       if (isPaciente()) {
-        data = await api.getCitasPorPaciente(user!.idUsuario)
+        // Paciente: solo ver sus propias citas
+        if (!user?.idUsuario) {
+          throw new Error("Usuario no autenticado")
+        }
+        data = await api.getCitasPorPaciente(user.idUsuario)
       } else if (isMedico()) {
-        data = await api.getCitasPorMedico(user!.idUsuario)
+        // Médico: ver citas de sus pacientes
+        if (!user?.idUsuario) {
+          throw new Error("Usuario no autenticado")
+        }
+        data = await api.getCitasPorMedico(user.idUsuario)
       } else {
+        // Admin: ver todas las citas
         data = await api.getCitas()
       }
-
+      
       const estadosData = await api.getEstados()
       setCitas(data)
       setEstados(estadosData)
-    } catch (error) {
+      
+    } catch (error: unknown) {
+      const err = error as { message?: string; mensaje?: string }
       toast({
         variant: "destructive",
         title: "Error",
-        description: "No se pudieron cargar las citas",
+        description: err.mensaje || err.message || "No se pudieron cargar las citas",
       })
     } finally {
       setIsLoading(false)
     }
   }
 
+ 
   useEffect(() => {
     loadCitas()
   }, [user])
 
   const getEstadoId = (nombreEstado: string) => {
-    const estado = estados.find((e) => e.nombreEstado.toLowerCase() === nombreEstado.toLowerCase())
+    const estado = estados.find((e) => (e.estado || e.nombreEstado || "").toLowerCase() === nombreEstado.toLowerCase())
     return estado?.idEstado
   }
 
@@ -126,7 +144,7 @@ export default function CitasPage() {
 
   const filterCitasByStatus = (status: string) => {
     if (status === "todas") return citas
-    return citas.filter((c) => c.estado.nombreEstado.toLowerCase() === status.toLowerCase())
+    return citas.filter((c) => (c.estadoCita || c.estado?.estado || c.estado?.nombreEstado || "").toLowerCase() === status.toLowerCase())
   }
 
   const baseColumns = [
@@ -139,8 +157,8 @@ export default function CitasPage() {
     {
       key: "estado",
       header: "Estado",
-      render: (cita: Cita) => <StatusBadge status={cita.estado.nombreEstado} />,
-    },
+      render: (cita: Cita) => <StatusBadge status={cita.estadoCita || cita.estado?.estado || cita.estado?.nombreEstado || "Desconocido"} />,
+    }, 
   ]
 
   const pacienteColumns = [
@@ -148,7 +166,7 @@ export default function CitasPage() {
     {
       key: "medico",
       header: "Médico",
-      render: (cita: Cita) => `Dr. ${cita.medico.nombres} ${cita.medico.apellidos}`,
+      render: (cita: Cita) => `Dr. ${cita.nombreMedico || `${cita.medico?.nombres} ${cita.medico?.apellidos}`}`,
     },
     ...baseColumns.slice(1),
   ]
@@ -158,7 +176,7 @@ export default function CitasPage() {
     {
       key: "paciente",
       header: "Paciente",
-      render: (cita: Cita) => `${cita.paciente.nombres} ${cita.paciente.apellidos}`,
+      render: (cita: Cita) => `${cita.nombrePaciente || `${cita.paciente?.nombres} ${cita.paciente?.apellidos}`}`,
     },
     ...baseColumns.slice(1),
   ]
@@ -168,12 +186,12 @@ export default function CitasPage() {
     {
       key: "paciente",
       header: "Paciente",
-      render: (cita: Cita) => `${cita.paciente.nombres} ${cita.paciente.apellidos}`,
+      render: (cita: Cita) => `${cita.nombrePaciente || `${cita.paciente?.nombres} ${cita.paciente?.apellidos}`}`,
     },
     {
       key: "medico",
       header: "Médico",
-      render: (cita: Cita) => `Dr. ${cita.medico.nombres} ${cita.medico.apellidos}`,
+      render: (cita: Cita) => `Dr. ${cita.nombreMedico || `${cita.medico?.nombres} ${cita.medico?.apellidos}`}`,
     },
     ...baseColumns.slice(1),
   ]
@@ -181,8 +199,9 @@ export default function CitasPage() {
   const columns = isPaciente() ? pacienteColumns : isMedico() ? medicoColumns : adminColumns
 
   const renderActions = (cita: Cita) => {
-    const isPending = cita.estado.nombreEstado.toLowerCase() === "pendiente"
-    const canCancel = isPending || cita.estado.nombreEstado.toLowerCase() === "aceptada"
+    const estadoActual = (cita.estadoCita || cita.estado?.estado || cita.estado?.nombreEstado || "").toLowerCase()
+    const isPending = estadoActual === "pendiente"
+    const canCancel = isPending || estadoActual === "aceptada"
 
     return (
       <div className="flex items-center justify-end gap-1">
@@ -266,11 +285,11 @@ export default function CitasPage() {
             {["todas", "pendiente", "aceptada", "rechazada", "cancelada"].map((status) => (
               <TabsContent key={status} value={status}>
                 <DataTable
-                  data={filterCitasByStatus(status)}
-                  columns={columns}
+                  data={filterCitasByStatus(status) as unknown as Record<string, unknown>[]}
+                  columns={columns as any}
                   isLoading={isLoading}
                   searchPlaceholder="Buscar por motivo..."
-                  actions={renderActions}
+                  actions={renderActions as any}
                 />
               </TabsContent>
             ))}

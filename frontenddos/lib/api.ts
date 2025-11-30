@@ -20,18 +20,29 @@ import type {
 } from "./types"
 
 const BASE_URL = "http://localhost:80/api"
+const TOKEN_KEY = "medicit_token"
 
 class ApiService {
+  private getToken(): string | null {
+    if (typeof window === "undefined") return null
+    return localStorage.getItem(TOKEN_KEY)
+  }
+
   private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
     const url = `${BASE_URL}${endpoint}`
+    const token = this.getToken()
+    
     const config: RequestInit = {
       ...options,
       headers: {
         "Content-Type": "application/json",
+        ...(token && { Authorization: `Bearer ${token}` }),
         ...options.headers,
       },
     }
-
+    console.log('url', url)
+    console.log('config', config)
+    console.table(config.body)
     const response = await fetch(url, config)
 
     if (!response.ok) {
