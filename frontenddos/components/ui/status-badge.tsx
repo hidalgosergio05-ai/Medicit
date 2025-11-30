@@ -17,6 +17,15 @@ const statusColors: Record<string, string> = {
 }
 
 export function StatusBadge({ status, className }: StatusBadgeProps) {
+  // Validar que status exista y sea un string
+  if (!status || typeof status !== "string") {
+    return (
+      <Badge variant="outline" className={cn("font-medium", statusColors.activo, className)}>
+        Desconocido
+      </Badge>
+    )
+  }
+
   const normalizedStatus = status.toLowerCase()
   const colorClass = statusColors[normalizedStatus] || statusColors.activo
 

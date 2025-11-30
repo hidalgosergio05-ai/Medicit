@@ -116,7 +116,9 @@ export default function EstadosPage() {
     {
       key: "nombreEstado",
       header: "Estado",
-      render: (estado: Estado) => <StatusBadge status={estado.nombreEstado} />,
+      render: (estado: Estado) => (
+        <StatusBadge status={estado.nombreEstado || estado.estado || "Desconocido"} />
+      ),
     },
   ]
 
@@ -141,7 +143,7 @@ export default function EstadosPage() {
               <CardTitle>Listado de Estados</CardTitle>
               <CardDescription>Estados disponibles en el sistema</CardDescription>
             </div>
-            {canCreate("modulo_administrativo") && (
+            {canCreate("modulo_catalogos") && (
               <Button onClick={() => setFormDialog({ open: true, estado: null, nombreEstado: "" })}>
                 <Plus className="mr-2 h-4 w-4" />
                 Nuevo estado
@@ -156,7 +158,7 @@ export default function EstadosPage() {
               searchPlaceholder="Buscar estado..."
               actions={(estado: Estado) => (
                 <div className="flex items-center justify-end gap-2">
-                  {canEdit("modulo_administrativo") && (
+                  {canEdit("modulo_catalogos") && (
                     <Button
                       variant="ghost"
                       size="icon"
@@ -165,7 +167,7 @@ export default function EstadosPage() {
                       <Pencil className="h-4 w-4" />
                     </Button>
                   )}
-                  {canDelete("modulo_administrativo") && (
+                  {canDelete("modulo_catalogos") && (
                     <Button variant="ghost" size="icon" onClick={() => setDeleteDialog({ open: true, estado })}>
                       <Trash2 className="h-4 w-4 text-destructive" />
                     </Button>

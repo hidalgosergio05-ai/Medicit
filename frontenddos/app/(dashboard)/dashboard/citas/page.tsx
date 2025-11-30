@@ -133,17 +133,33 @@ export default function CitasPage() {
     if (!deleteDialog.cita) return
 
     try {
-      await api.eliminarCita(deleteDialog.cita.idCita)
+      // Cambiar estado a "Cancelada" en lugar de eliminar
+      const estadoId = getEstadoId("Cancelada")
+      
+      if (!estadoId) {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: 'No se encontró el estado "Cancelada"',
+        })
+        return
+      }
+
+      await api.actualizarCita(deleteDialog.cita.idCita, {
+        estado: { idEstado: estadoId },
+      })
+
       toast({
         title: "Cita cancelada",
         description: "La cita ha sido cancelada correctamente",
       })
       loadCitas()
-    } catch (error) {
+    } catch (error: unknown) {
+      const err = error as { message?: string; mensaje?: string }
       toast({
         variant: "destructive",
         title: "Error",
-        description: "No se pudo cancelar la cita",
+        description: err.mensaje || err.message || "No se pudo cancelar la cita",
       })
     } finally {
       setDeleteDialog({ open: false, cita: null })
@@ -217,7 +233,13 @@ export default function CitasPage() {
   const renderActions = (cita: Cita) => {
     const estadoActual = (cita.estadoCita || cita.estado?.estado || cita.estado?.nombreEstado || "").toLowerCase()
     const isPending = estadoActual === "pendiente"
-    const canCancel = isPending || estadoActual === "aceptada"
+    const canCancel = estadoActual !== "cancelada" && estadoActual !== "rechazada"
+    
+    // Verificar permisos de eliminación (cancelación) usando el formato correcto
+    const hasDeletePermission = canDelete("moduloCitas")
+    
+    // Permitir cancelar según el rol y permisos
+    const canCancelByRole = canCancel && hasDeletePermission
 
     return (
       <div className="flex items-center justify-end gap-1">
@@ -253,8 +275,13 @@ export default function CitasPage() {
         )}
 
         {/* Cancel action */}
-        {(isPaciente() || isAdmin()) && canCancel && canDelete("modulo_citas") && (
-          <Button variant="ghost" size="icon" onClick={() => setDeleteDialog({ open: true, cita })}>
+        {canCancelByRole && (
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={() => setDeleteDialog({ open: true, cita })}
+            title="Cancelar cita"
+          >
             <Trash2 className="h-4 w-4 text-destructive" />
             <span className="sr-only">Cancelar</span>
           </Button>
@@ -345,8 +372,13 @@ export default function CitasPage() {
         open={deleteDialog.open}
         onOpenChange={(open) => setDeleteDialog({ ...deleteDialog, open })}
         title="Cancelar cita"
-        description="¿Estás seguro de que deseas cancelar esta cita? Esta acción no se puede deshacer."
+        description={
+          deleteDialog.cita
+            ? `¿Estás seguro de que deseas cancelar la cita del ${formatDateTime(deleteDialog.cita.fechaHora)}? Una vez cancelada, podrás solicitar una nueva cita si es necesario.`
+            : "¿Estás seguro de que deseas cancelar esta cita?"
+        }
         confirmText="Cancelar cita"
+        cancelText="Mantener cita"
         variant="destructive"
         onConfirm={handleDelete}
       />

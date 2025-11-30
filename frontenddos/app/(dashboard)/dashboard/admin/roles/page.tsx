@@ -136,7 +136,7 @@ export default function RolesPage() {
               <CardTitle>Listado de Roles</CardTitle>
               <CardDescription>Roles disponibles en el sistema</CardDescription>
             </div>
-            {canCreate("modulo_administrativo") && (
+            {canCreate("modulo_catalogos") && (
               <Button onClick={() => setFormDialog({ open: true, rol: null, nombreRol: "" })}>
                 <Plus className="mr-2 h-4 w-4" />
                 Nuevo rol
@@ -145,28 +145,31 @@ export default function RolesPage() {
           </CardHeader>
           <CardContent>
             <DataTable
-              data={roles}
+              data={roles as unknown as Record<string, unknown>[]}
               columns={columns}
               isLoading={isLoading}
               searchPlaceholder="Buscar rol..."
-              actions={(rol: Rol) => (
-                <div className="flex items-center justify-end gap-2">
-                  {canEdit("modulo_administrativo") && (
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => setFormDialog({ open: true, rol, nombreRol: rol.nombreRol })}
-                    >
-                      <Pencil className="h-4 w-4" />
-                    </Button>
-                  )}
-                  {canDelete("modulo_administrativo") && (
-                    <Button variant="ghost" size="icon" onClick={() => setDeleteDialog({ open: true, rol })}>
-                      <Trash2 className="h-4 w-4 text-destructive" />
-                    </Button>
-                  )}
-                </div>
-              )}
+              actions={(item: Record<string, unknown>) => {
+                const rol = item as unknown as Rol
+                return (
+                  <div className="flex items-center justify-end gap-2">
+                    {canEdit("modulo_catalogos") && (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => setFormDialog({ open: true, rol, nombreRol: rol.nombreRol })}
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                    )}
+                    {canDelete("modulo_catalogos") && (
+                      <Button variant="ghost" size="icon" onClick={() => setDeleteDialog({ open: true, rol })}>
+                        <Trash2 className="h-4 w-4 text-destructive" />
+                      </Button>
+                    )}
+                  </div>
+                )
+              }}
             />
           </CardContent>
         </Card>

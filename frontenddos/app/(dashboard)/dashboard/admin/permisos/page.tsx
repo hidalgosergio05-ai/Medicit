@@ -16,12 +16,14 @@ import Link from "next/link"
 import type { Rol, Permiso } from "@/lib/types"
 
 const MODULOS = [
-  { key: "modulo_usuarios", label: "Gestión de Usuarios" },
-  { key: "modulo_citas", label: "Gestión de Citas" },
-  { key: "modulo_medico", label: "Gestión Médica" },
-  { key: "modulo_administrativo", label: "Gestión Administrativa" },
-  { key: "modulo_catalogos", label: "Catálogos" },
-  { key: "modulo_configuracion", label: "Configuración" },
+  { key: "modulo_dashboard", label: "Dashboard", editable: true },
+  { key: "modulo_inicio", label: "Inicio", editable: true },
+  { key: "modulo_usuarios", label: "Gestión de Usuarios", editable: true },
+  { key: "modulo_citas", label: "Gestión de Citas", editable: true },
+  { key: "modulo_medico", label: "Gestión Médica", editable: true },
+  { key: "modulo_administrativo", label: "Gestión Administrativa (Permisos)", editable: true },
+  { key: "modulo_catalogos", label: "Catálogos (Roles/Estados/Especialidades)", editable: true },
+  { key: "modulo_configuracion", label: "Configuración Personal", editable: true },
 ]
 
 export default function PermisosPage() {
@@ -39,16 +41,17 @@ export default function PermisosPage() {
     const loadData = async () => {
       try {
         const [rolesData, permisosData] = await Promise.all([api.getRoles(), api.getPermisos()])
-        setRoles(rolesData)
-        setPermisos(permisosData)
-        if (rolesData.length > 0) {
+        setRoles(rolesData || [])
+        setPermisos(permisosData || [])
+        if (rolesData && rolesData.length > 0) {
           setSelectedRol(String(rolesData[0].idRol))
         }
-      } catch (error) {
+      } catch (error: unknown) {
+        const err = error as { message?: string; mensaje?: string }
         toast({
           variant: "destructive",
           title: "Error",
-          description: "No se pudieron cargar los datos",
+          description: err.mensaje || err.message || "No se pudieron cargar los datos",
         })
       } finally {
         setIsLoading(false)
@@ -168,6 +171,9 @@ export default function PermisosPage() {
             <CardDescription>Selecciona un rol y configura sus permisos por módulo</CardDescription>
           </CardHeader>
           <CardContent>
+            <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg text-sm text-blue-800">
+              <strong>Nota:</strong> El administrador puede editar todos los permisos. Los módulos "Gestión Administrativa" y "Catálogos" pueden ser editados para asignar permisos a otros roles.
+            </div>
             <Tabs value={selectedRol} onValueChange={setSelectedRol}>
               <TabsList className="flex-wrap h-auto">
                 {roles.map((rol) => (

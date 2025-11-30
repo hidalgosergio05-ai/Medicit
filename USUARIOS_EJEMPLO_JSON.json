@@ -1,0 +1,118 @@
+{
+  "description": "Ejemplos de estructura JSON para crear usuarios (Médico y Administrador)",
+  
+  "medico": {
+    "nombreUsuario": "drmartinez",
+    "nombres": "Carlos",
+    "apellidos": "Martínez López",
+    "dui": "98765432-1",
+    "fechaNacimiento": "1985-03-20",
+    "idRol": 2,
+    "idEstado": 1,
+    "contrasenia": "password123",
+    "telefono": "70123456",
+    "correo": "dr.martinez@email.com",
+    "especialidades": [1, 5],
+    "preguntasRespuestas": [
+      {
+        "pregunta": "¿Cuál es tu animal favorito?",
+        "respuesta": "Gato"
+      },
+      {
+        "pregunta": "¿En qué ciudad naciste?",
+        "respuesta": "San Salvador"
+      },
+      {
+        "pregunta": "¿Cuál es el nombre de tu mascota?",
+        "respuesta": "Pelusa"
+      }
+    ]
+  },
+
+  "administrador": {
+    "nombreUsuario": "admin",
+    "nombres": "Administrador",
+    "apellidos": "Sistema",
+    "dui": "11111111-1",
+    "fechaNacimiento": "1980-01-01",
+    "idRol": 3,
+    "idEstado": 1,
+    "contrasenia": "admin123",
+    "telefono": "70000000",
+    "correo": "admin@medicit.com",
+    "especialidades": [],
+    "preguntasRespuestas": [
+      {
+        "pregunta": "¿Cuál es tu animal favorito?",
+        "respuesta": "No aplica"
+      },
+      {
+        "pregunta": "¿En qué ciudad naciste?",
+        "respuesta": "San Salvador"
+      },
+      {
+        "pregunta": "¿Cuál es el nombre de tu mascota?",
+        "respuesta": "No aplica"
+      }
+    ]
+  },
+
+  "paciente": {
+    "nombreUsuario": "juanperez",
+    "nombres": "Juan",
+    "apellidos": "Pérez García",
+    "dui": "12345678-9",
+    "fechaNacimiento": "1990-05-15",
+    "idRol": 1,
+    "idEstado": 1,
+    "contrasenia": "password123",
+    "telefono": "71234567",
+    "correo": "juan.perez@email.com",
+    "especialidades": [],
+    "preguntasRespuestas": [
+      {
+        "pregunta": "¿Cuál es tu animal favorito?",
+        "respuesta": "Perro"
+      },
+      {
+        "pregunta": "¿En qué ciudad naciste?",
+        "respuesta": "San Salvador"
+      },
+      {
+        "pregunta": "¿Cuál es el nombre de tu mascota?",
+        "respuesta": "Max"
+      }
+    ]
+  },
+
+  "notas": {
+    "idRol": {
+      "1": "Paciente",
+      "2": "Medico",
+      "3": "Administrador"
+    },
+    "idEstado": {
+      "1": "Activo",
+      "2": "Inactivo"
+    },
+    "especialidades": {
+      "1": "Cardiología",
+      "2": "Pediatría",
+      "3": "Neurología",
+      "4": "Dermatología",
+      "5": "Traumatología",
+      "6": "Oftalmología",
+      "7": "Otorrinolaringología",
+      "8": "Psicología"
+    },
+    "observaciones": [
+      "El campo 'especialidades' solo aplica para rol Medico (idRol=2)",
+      "Para Paciente (idRol=1) y Administrador (idRol=3), especialidades debe ser un array vacío []",
+      "Las contraseñas deben ser hasheadas con bcrypt en producción",
+      "Los telefonos deben incluir el código de país o área (formato sin caracteres especiales)",
+      "El campo 'correo' debe ser único en la base de datos",
+      "Las fechas deben estar en formato 'YYYY-MM-DD'",
+      "El campo 'preguntasRespuestas' es para preguntas de seguridad"
+    ]
+  }
+}

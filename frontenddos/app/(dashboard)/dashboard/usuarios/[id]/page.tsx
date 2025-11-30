@@ -411,7 +411,7 @@ export default function UsuarioDetailPage() {
                         header: "Estado",
                         render: (item: any) => {
                           const cita = item as Cita
-                          const status = cita.estado?.nombreEstado || cita.estadoCita || ""
+                          const status = cita.estado?.nombreEstado || cita.estadoCita || cita.estado?.estado || "Desconocido"
                           return <StatusBadge status={status} />
                         },
                       },

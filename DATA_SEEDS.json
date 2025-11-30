@@ -1,0 +1,401 @@
+{
+  "description": "Datos necesarios para alimentar la base de datos según lo que espera el frontend",
+  
+  "roles": [
+    {
+      "idRol": 1,
+      "nombreRol": "Paciente",
+      "descripcion": "Usuario paciente que puede solicitar citas y ver su historial médico"
+    },
+    {
+      "idRol": 2,
+      "nombreRol": "Medico",
+      "descripcion": "Médico que puede aceptar/rechazar citas y gestionar antecedentes de pacientes"
+    },
+    {
+      "idRol": 3,
+      "nombreRol": "Administrador",
+      "descripcion": "Administrador del sistema con acceso total"
+    }
+  ],
+
+  "estados": [
+    {
+      "idEstado": 1,
+      "estado": "Activo",
+      "descripcion": "Usuario o recurso activo en el sistema"
+    },
+    {
+      "idEstado": 2,
+      "estado": "Inactivo",
+      "descripcion": "Usuario o recurso inactivo en el sistema"
+    },
+    {
+      "idEstado": 3,
+      "estado": "Pendiente",
+      "descripcion": "Cita pendiente de aprobación"
+    },
+    {
+      "idEstado": 4,
+      "estado": "Aceptada",
+      "descripcion": "Cita aceptada por el médico"
+    },
+    {
+      "idEstado": 5,
+      "estado": "Rechazada",
+      "descripcion": "Cita rechazada por el médico"
+    },
+    {
+      "idEstado": 6,
+      "estado": "Cancelada",
+      "descripcion": "Cita cancelada por paciente o médico"
+    }
+  ],
+
+  "modulos": [
+    "modulo_dashboard",
+    "modulo_inicio",
+    "modulo_usuarios",
+    "modulo_citas",
+    "modulo_medico",
+    "modulo_administrativo",
+    "modulo_catalogos",
+    "modulo_configuracion"
+  ],
+
+  "permisos_estructura": {
+    "description": "Estructura de la tabla permisos - ya no hay tabla separada de modulos",
+    "fields": {
+      "idPermiso": "ID único (autoincrement)",
+      "idRol": "ID del rol que tiene este permiso",
+      "modulo": "Nombre del módulo (string)",
+      "ver": "Boolean - permiso de visualización",
+      "crear": "Boolean - permiso de crear",
+      "editar": "Boolean - permiso de editar",
+      "eliminar": "Boolean - permiso de eliminar",
+      "descargar": "Boolean - permiso de descargar"
+    },
+    "ejemplo": {
+      "idPermiso": 1,
+      "idRol": 1,
+      "modulo": "modulo_dashboard",
+      "ver": true,
+      "crear": true,
+      "editar": true,
+      "eliminar": false,
+      "descargar": false
+    }
+  },
+
+  "permisos_por_rol": {
+    "paciente": [
+      {
+        "idRol": 1,
+        "modulo": "modulo_dashboard",
+        "ver": true,
+        "crear": false,
+        "editar": false,
+        "eliminar": false,
+        "descargar": false,
+        "descripcion": "Acceso básico al dashboard"
+      },
+      {
+        "idRol": 1,
+        "modulo": "modulo_inicio",
+        "ver": true,
+        "crear": false,
+        "editar": false,
+        "eliminar": false,
+        "descargar": false,
+        "descripcion": "Acceso a la página de inicio"
+      },
+      {
+        "idRol": 1,
+        "modulo": "modulo_citas",
+        "ver": true,
+        "crear": true,
+        "editar": false,
+        "eliminar": true,
+        "descargar": false,
+        "descripcion": "Paciente puede solicitar y cancelar citas"
+      },
+      {
+        "idRol": 1,
+        "modulo": "modulo_configuracion",
+        "ver": true,
+        "crear": false,
+        "editar": true,
+        "eliminar": false,
+        "descargar": false,
+        "descripcion": "Puede editar su configuración personal"
+      }
+    ],
+
+    "medico": [
+      {
+        "idRol": 2,
+        "modulo": "modulo_dashboard",
+        "ver": true,
+        "crear": false,
+        "editar": false,
+        "eliminar": false,
+        "descargar": false,
+        "descripcion": "Acceso básico al dashboard"
+      },
+      {
+        "idRol": 2,
+        "modulo": "modulo_inicio",
+        "ver": true,
+        "crear": false,
+        "editar": false,
+        "eliminar": false,
+        "descargar": false,
+        "descripcion": "Acceso a la página de inicio"
+      },
+      {
+        "idRol": 2,
+        "modulo": "modulo_citas",
+        "ver": true,
+        "crear": false,
+        "editar": true,
+        "eliminar": true,
+        "descargar": false,
+        "descripcion": "Médico puede ver, editar y cancelar citas"
+      },
+      {
+        "idRol": 2,
+        "modulo": "modulo_medico",
+        "ver": true,
+        "crear": true,
+        "editar": true,
+        "eliminar": true,
+        "descargar": true,
+        "descripcion": "Acceso total a gestión médica"
+      },
+      {
+        "idRol": 2,
+        "modulo": "modulo_configuracion",
+        "ver": true,
+        "crear": false,
+        "editar": true,
+        "eliminar": false,
+        "descargar": false,
+        "descripcion": "Puede editar su configuración personal"
+      }
+    ],
+
+    "administrador": [
+      {
+        "idRol": 3,
+        "modulo": "modulo_dashboard",
+        "ver": true,
+        "crear": false,
+        "editar": false,
+        "eliminar": false,
+        "descargar": false,
+        "descripcion": "Acceso al dashboard"
+      },
+      {
+        "idRol": 3,
+        "modulo": "modulo_inicio",
+        "ver": true,
+        "crear": false,
+        "editar": false,
+        "eliminar": false,
+        "descargar": false,
+        "descripcion": "Acceso a la página de inicio"
+      },
+      {
+        "idRol": 3,
+        "modulo": "modulo_usuarios",
+        "ver": true,
+        "crear": true,
+        "editar": true,
+        "eliminar": true,
+        "descargar": true,
+        "descripcion": "Acceso total a gestión de usuarios"
+      },
+      {
+        "idRol": 3,
+        "modulo": "modulo_citas",
+        "ver": true,
+        "crear": true,
+        "editar": true,
+        "eliminar": true,
+        "descargar": true,
+        "descripcion": "Acceso total a gestión de citas"
+      },
+      {
+        "idRol": 3,
+        "modulo": "modulo_medico",
+        "ver": true,
+        "crear": true,
+        "editar": true,
+        "eliminar": true,
+        "descargar": true,
+        "descripcion": "Acceso total a gestión médica"
+      },
+      {
+        "idRol": 3,
+        "modulo": "modulo_administrativo",
+        "ver": true,
+        "crear": true,
+        "editar": true,
+        "eliminar": true,
+        "descargar": false,
+        "descripcion": "Acceso total a gestión de permisos"
+      },
+      {
+        "idRol": 3,
+        "modulo": "modulo_catalogos",
+        "ver": true,
+        "crear": true,
+        "editar": true,
+        "eliminar": true,
+        "descargar": false,
+        "descripcion": "Acceso total a catálogos (roles, estados, especialidades)"
+      },
+      {
+        "idRol": 3,
+        "modulo": "modulo_configuracion",
+        "ver": true,
+        "crear": false,
+        "editar": true,
+        "eliminar": false,
+        "descargar": false,
+        "descripcion": "Puede editar su configuración personal"
+      }
+    ]
+  },
+
+  "especialidades": [
+    {
+      "idEspecialidad": 1,
+      "nombreEspecialidad": "Cardiología",
+      "descripcion": "Especialista en enfermedades del corazón"
+    },
+    {
+      "idEspecialidad": 2,
+      "nombreEspecialidad": "Pediatría",
+      "descripcion": "Especialista en medicina infantil"
+    },
+    {
+      "idEspecialidad": 3,
+      "nombreEspecialidad": "Neurología",
+      "descripcion": "Especialista en enfermedades del sistema nervioso"
+    },
+    {
+      "idEspecialidad": 4,
+      "nombreEspecialidad": "Dermatología",
+      "descripcion": "Especialista en enfermedades de la piel"
+    },
+    {
+      "idEspecialidad": 5,
+      "nombreEspecialidad": "Traumatología",
+      "descripcion": "Especialista en lesiones y fracturas"
+    },
+    {
+      "idEspecialidad": 6,
+      "nombreEspecialidad": "Oftalmología",
+      "descripcion": "Especialista en enfermedades oculares"
+    },
+    {
+      "idEspecialidad": 7,
+      "nombreEspecialidad": "Otorrinolaringología",
+      "descripcion": "Especialista en oído, nariz y garganta"
+    },
+    {
+      "idEspecialidad": 8,
+      "nombreEspecialidad": "Psicología",
+      "descripcion": "Especialista en salud mental"
+    }
+  ],
+
+  "usuarios_ejemplo": {
+    "description": "Ejemplos de usuarios para cada rol",
+    "note": "Los valores como apellidos y correos son ejemplos y deben ajustarse según necesidad",
+    
+    "paciente_ejemplo": {
+      "nombreUsuario": "juanperez",
+      "contrasenia": "password123",
+      "nombres": "Juan",
+      "apellidos": "Pérez García",
+      "correo": "juan.perez@email.com",
+      "dui": "12345678-9",
+      "fechaNacimiento": "1990-05-15",
+      "idRol": 1,
+      "idEstado": 1
+    },
+
+    "medico_ejemplo": {
+      "nombreUsuario": "drmartinez",
+      "contrasenia": "password123",
+      "nombres": "Carlos",
+      "apellidos": "Martínez López",
+      "correo": "dr.martinez@email.com",
+      "dui": "98765432-1",
+      "fechaNacimiento": "1985-03-20",
+      "idRol": 2,
+      "idEstado": 1,
+      "especialidades": [1, 5]
+    },
+
+    "admin_ejemplo": {
+      "nombreUsuario": "admin",
+      "contrasenia": "admin123",
+      "nombres": "Administrador",
+      "apellidos": "Sistema",
+      "correo": "admin@medicit.com",
+      "dui": "11111111-1",
+      "fechaNacimiento": "1980-01-01",
+      "idRol": 3,
+      "idEstado": 1
+    }
+  },
+
+  "reference_guide": {
+    "rol_names_accepted": [
+      "Paciente",
+      "Medico",
+      "Administrador"
+    ],
+    "estado_names_accepted": [
+      "Activo",
+      "Inactivo",
+      "Pendiente",
+      "Aceptada",
+      "Rechazada",
+      "Cancelada"
+    ],
+    "cita_states": [
+      "Pendiente",
+      "Aceptada",
+      "Rechazada",
+      "Cancelada"
+    ],
+    "modulos_list": [
+      "modulo_dashboard",
+      "modulo_inicio",
+      "modulo_usuarios",
+      "modulo_citas",
+      "modulo_medico",
+      "modulo_administrativo",
+      "modulo_catalogos",
+      "modulo_configuracion"
+    ],
+    "estructura_tabla_permisos": {
+      "nota": "La tabla 'permisos' contiene directamente los permisos sin tablas separadas de modulos",
+      "campos": [
+        "idPermiso",
+        "idRol",
+        "modulo (string)",
+        "ver (boolean)",
+        "crear (boolean)",
+        "editar (boolean)",
+        "eliminar (boolean)",
+        "descargar (boolean)",
+        "descripcion"
+      ]
+    }
+  }
+}

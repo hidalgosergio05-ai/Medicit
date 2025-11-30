@@ -421,7 +421,18 @@ class ApiService {
 
   // ==================== PERMISOS ====================
   async getPermisos(): Promise<Permiso[]> {
-    return this.request<Permiso[]>("/permisos")
+    const response = await this.request<any[]>("/permisos")
+    // Procesar permisos para extraer idRol del objeto rol anidado
+    return response.map((permiso: any) => ({
+      idPermiso: permiso.idPermiso || permiso.id_permiso,
+      idRol: permiso.rol?.idRol || permiso.rol?.id_rol || permiso.idRol || permiso.id_rol,
+      modulo: permiso.modulo,
+      ver: permiso.ver,
+      crear: permiso.crear,
+      editar: permiso.editar,
+      eliminar: permiso.eliminar,
+      descargar: permiso.descargar,
+    }))
   }
 
   async getPermiso(id: number): Promise<Permiso> {
@@ -429,7 +440,17 @@ class ApiService {
   }
 
   async getPermisosPorRol(idRol: number): Promise<Permiso[]> {
-    return this.request<Permiso[]>(`/permisos/rol/${idRol}`)
+    const response = await this.request<any[]>(`/permisos/rol/${idRol}`)
+    return response.map((permiso: any) => ({
+      idPermiso: permiso.idPermiso || permiso.id_permiso,
+      idRol: permiso.rol?.idRol || permiso.rol?.id_rol || permiso.idRol || permiso.id_rol,
+      modulo: permiso.modulo,
+      ver: permiso.ver,
+      crear: permiso.crear,
+      editar: permiso.editar,
+      eliminar: permiso.eliminar,
+      descargar: permiso.descargar,
+    }))
   }
 
   async crearPermiso(payload: Omit<Permiso, "idPermiso" | "nombreRol">): Promise<Permiso> {
