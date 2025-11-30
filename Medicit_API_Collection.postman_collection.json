@@ -1,0 +1,319 @@
+{
+  "info": {
+    "_postman_id": "medicit-api-collection",
+    "name": "Medicit API - Pruebas Completas",
+    "description": "Colección de pruebas para todos los nuevos endpoints implementados",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. Login y Autenticación",
+      "item": [
+        {
+          "name": "Login - Obtener usuario con permisos",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombreUsuario\": \"juanperez\",\n  \"contrasenia\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Autentica un usuario y retorna toda su información consolidada (usuario + permisos)"
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener usuario consolidado sin login",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/auth/usuario/5",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "usuario",
+                "5"
+              ]
+            },
+            "description": "Obtiene la información consolidada de un usuario sin necesidad de validar contraseña"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "2. Citas",
+      "item": [
+        {
+          "name": "Obtener citas por paciente",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/citas/paciente/3",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "citas",
+                "paciente",
+                "3"
+              ]
+            },
+            "description": "Obtiene todas las citas de un paciente en formato simplificado"
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener citas por médico",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/citas/medico/5",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "citas",
+                "medico",
+                "5"
+              ]
+            },
+            "description": "Obtiene todas las citas de un médico en formato simplificado"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "3. Preguntas y Respuestas",
+      "item": [
+        {
+          "name": "Obtener respuestas de usuario",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/respuestas/usuario/5",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "respuestas",
+                "usuario",
+                "5"
+              ]
+            },
+            "description": "Obtiene todas las respuestas/preguntas de un usuario con su ID incluido"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "4. Contraseñas",
+      "item": [
+        {
+          "name": "Obtener contraseña de usuario",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/contrasenias/usuario/5",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "contrasenias",
+                "usuario",
+                "5"
+              ]
+            },
+            "description": "Obtiene la contraseña de un usuario con su información"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "5. Antecedentes",
+      "item": [
+        {
+          "name": "Obtener antecedentes de usuario",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/antecedentes/usuario/5",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "antecedentes",
+                "usuario",
+                "5"
+              ]
+            },
+            "description": "Obtiene los antecedentes de un usuario (solo ID y descripción)"
+          },
+          "response": []
+        },
+        {
+          "name": "Crear antecedente",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"usuario\": {\n    \"idUsuario\": 5\n  },\n  \"antecedente\": \"Alergia a la penicilina\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/antecedentes",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "antecedentes"
+              ]
+            },
+            "description": "Crea un nuevo antecedente para un usuario"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "6. Especialidades",
+      "item": [
+        {
+          "name": "Asignar múltiples especialidades",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "[1, 2, 3]"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/usuarios/5/especialidades",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "usuarios",
+                "5",
+                "especialidades"
+              ]
+            },
+            "description": "Asigna múltiples especialidades a un usuario médico"
+          },
+          "response": []
+        },
+        {
+          "name": "Asignar una especialidad",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/usuarios/5/especialidades/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "usuarios",
+                "5",
+                "especialidades",
+                "1"
+              ]
+            },
+            "description": "Asigna una sola especialidad a un usuario"
+          },
+          "response": []
+        },
+        {
+          "name": "Eliminar especialidad",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/usuarios/5/especialidades/2",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "usuarios",
+                "5",
+                "especialidades",
+                "2"
+              ]
+            },
+            "description": "Elimina una especialidad de un usuario"
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "usuario_id",
+      "value": "5",
+      "type": "string"
+    },
+    {
+      "key": "medico_id",
+      "value": "5",
+      "type": "string"
+    },
+    {
+      "key": "paciente_id",
+      "value": "3",
+      "type": "string"
+    }
+  ]
+}

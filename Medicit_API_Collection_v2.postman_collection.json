@@ -1,0 +1,482 @@
+{
+  "info": {
+    "_postman_id": "medicit-api-collection-v2",
+    "name": "Medicit API - Pruebas Completas con Permisos",
+    "description": "Colección completa de pruebas para todos los endpoints incluida gestión de permisos",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "0. Configuración Inicial",
+      "description": "Configura variables y obtén IDs necesarios",
+      "item": [
+        {
+          "name": "Obtener todos los roles",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/roles",
+              "host": ["{{base_url}}"],
+              "path": ["api", "roles"]
+            },
+            "description": "Obtiene una lista de todos los roles disponibles en el sistema"
+          }
+        }
+      ]
+    },
+    {
+      "name": "1. Gestión de Permisos",
+      "description": "CRUD completo de permisos",
+      "item": [
+        {
+          "name": "1.1 - Obtener todos los permisos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/permisos",
+              "host": ["{{base_url}}"],
+              "path": ["api", "permisos"]
+            },
+            "description": "Obtiene una lista de todos los permisos definidos en el sistema"
+          }
+        },
+        {
+          "name": "1.2 - Obtener permiso por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/permisos/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "permisos", "1"]
+            },
+            "description": "Obtiene un permiso específico por su ID"
+          }
+        },
+        {
+          "name": "1.3 - Obtener permisos por rol",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/permisos/rol/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "permisos", "rol", "1"]
+            },
+            "description": "Obtiene todos los permisos asignados a un rol específico (ejemplo: rol ID 1 - Medico)"
+          }
+        },
+        {
+          "name": "1.4 - Crear nuevo permiso",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rol\": {\n    \"idRol\": 2\n  },\n  \"modulo\": \"modulo_reportes\",\n  \"ver\": true,\n  \"crear\": true,\n  \"editar\": true,\n  \"eliminar\": false,\n  \"descargar\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/permisos",
+              "host": ["{{base_url}}"],
+              "path": ["api", "permisos"]
+            },
+            "description": "Crea un nuevo permiso para una combinación rol-módulo"
+          }
+        },
+        {
+          "name": "1.5 - Actualizar permiso",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rol\": {\n    \"idRol\": 2\n  },\n  \"modulo\": \"modulo_reportes\",\n  \"ver\": true,\n  \"crear\": false,\n  \"editar\": true,\n  \"eliminar\": false,\n  \"descargar\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/permisos/15",
+              "host": ["{{base_url}}"],
+              "path": ["api", "permisos", "15"]
+            },
+            "description": "Actualiza los permisos de una combinación rol-módulo existente"
+          }
+        },
+        {
+          "name": "1.6 - Eliminar permiso",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/permisos/15",
+              "host": ["{{base_url}}"],
+              "path": ["api", "permisos", "15"]
+            },
+            "description": "Elimina un permiso específico"
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Flujo: Crear Rol + Permisos + Usuario",
+      "description": "Pasos para crear un nuevo rol con permisos y asignarlo a un usuario",
+      "item": [
+        {
+          "name": "Paso 1 - Crear nuevo rol",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombreRol\": \"Especialista\",\n  \"descripcion\": \"Rol para especialistas del sistema\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/roles",
+              "host": ["{{base_url}}"],
+              "path": ["api", "roles"]
+            },
+            "description": "Crea un nuevo rol que será usado en los siguientes pasos"
+          }
+        },
+        {
+          "name": "Paso 2 - Crear permisos para el rol (módulo_usuarios)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rol\": {\n    \"idRol\": 5\n  },\n  \"modulo\": \"modulo_usuarios\",\n  \"ver\": true,\n  \"crear\": true,\n  \"editar\": false,\n  \"eliminar\": false,\n  \"descargar\": false\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/permisos",
+              "host": ["{{base_url}}"],
+              "path": ["api", "permisos"]
+            },
+            "description": "Asigna permisos para el módulo de usuarios al nuevo rol"
+          }
+        },
+        {
+          "name": "Paso 3 - Crear permisos para el rol (módulo_citas)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rol\": {\n    \"idRol\": 5\n  },\n  \"modulo\": \"modulo_citas\",\n  \"ver\": true,\n  \"crear\": true,\n  \"editar\": true,\n  \"eliminar\": false,\n  \"descargar\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/permisos",
+              "host": ["{{base_url}}"],
+              "path": ["api", "permisos"]
+            },
+            "description": "Asigna permisos para el módulo de citas al nuevo rol"
+          }
+        },
+        {
+          "name": "Paso 4 - Crear permisos para el rol (módulo_antecedentes)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rol\": {\n    \"idRol\": 5\n  },\n  \"modulo\": \"modulo_antecedentes\",\n  \"ver\": true,\n  \"crear\": false,\n  \"editar\": false,\n  \"eliminar\": false,\n  \"descargar\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/permisos",
+              "host": ["{{base_url}}"],
+              "path": ["api", "permisos"]
+            },
+            "description": "Asigna permisos para el módulo de antecedentes al nuevo rol"
+          }
+        },
+        {
+          "name": "Paso 5 - Validar permisos creados para el rol",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/permisos/rol/5",
+              "host": ["{{base_url}}"],
+              "path": ["api", "permisos", "rol", "5"]
+            },
+            "description": "Verifica que todos los permisos se crearon correctamente para el rol"
+          }
+        },
+        {
+          "name": "Paso 6 - Crear usuario con el nuevo rol",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombreUsuario\": \"especialista1\",\n  \"nombres\": \"Carlos\",\n  \"apellidos\": \"Gómez\",\n  \"correo\": \"carlos@mail.com\",\n  \"idRol\": 5,\n  \"idEstado\": 1\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/usuarios",
+              "host": ["{{base_url}}"],
+              "path": ["api", "usuarios"]
+            },
+            "description": "Crea un nuevo usuario asignándole el rol recién creado"
+          }
+        },
+        {
+          "name": "Paso 7 - Crear contraseña para el usuario",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"usuario\": {\n    \"idUsuario\": 10\n  },\n  \"contrasenia\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/contrasenias",
+              "host": ["{{base_url}}"],
+              "path": ["api", "contrasenias"]
+            },
+            "description": "Asigna una contraseña al usuario"
+          }
+        },
+        {
+          "name": "Paso 8 - Login con el nuevo usuario",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombreUsuario\": \"especialista1\",\n  \"contrasenia\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "login"]
+            },
+            "description": "Inicia sesión con el nuevo usuario y verifica que recibe los permisos asignados"
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Login y Autenticación",
+      "item": [
+        {
+          "name": "Login - Obtener usuario con permisos",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombreUsuario\": \"juanperez\",\n  \"contrasenia\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "login"]
+            },
+            "description": "Autentica un usuario y retorna toda su información consolidada (usuario + permisos)"
+          }
+        },
+        {
+          "name": "Obtener usuario consolidado sin login",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/auth/usuario/5",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "usuario", "5"]
+            },
+            "description": "Obtiene los datos consolidados de un usuario incluyendo sus permisos"
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Citas",
+      "item": [
+        {
+          "name": "Obtener citas del paciente",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/citas/paciente/3",
+              "host": ["{{base_url}}"],
+              "path": ["api", "citas", "paciente", "3"]
+            },
+            "description": "Obtiene todas las citas de un paciente específico"
+          }
+        },
+        {
+          "name": "Obtener citas del médico",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/citas/medico/5",
+              "host": ["{{base_url}}"],
+              "path": ["api", "citas", "medico", "5"]
+            },
+            "description": "Obtiene todas las citas de un médico específico"
+          }
+        },
+        {
+          "name": "Crear cita",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"paciente\": {\n    \"idUsuario\": 3\n  },\n  \"medico\": {\n    \"idUsuario\": 5\n  },\n  \"fechaHora\": \"2025-12-15T14:30:00\",\n  \"motivo\": \"Consulta general\",\n  \"estadoCita\": \"Confirmada\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/citas",
+              "host": ["{{base_url}}"],
+              "path": ["api", "citas"]
+            },
+            "description": "Crea una nueva cita entre paciente y médico"
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Preguntas y Respuestas",
+      "item": [
+        {
+          "name": "Obtener respuestas del usuario",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/respuestas/usuario/5",
+              "host": ["{{base_url}}"],
+              "path": ["api", "respuestas", "usuario", "5"]
+            },
+            "description": "Obtiene todas las respuestas de seguridad de un usuario"
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Antecedentes",
+      "item": [
+        {
+          "name": "Obtener antecedentes del usuario",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/antecedentes/usuario/5",
+              "host": ["{{base_url}}"],
+              "path": ["api", "antecedentes", "usuario", "5"]
+            },
+            "description": "Obtiene el historial de antecedentes médicos de un usuario"
+          }
+        },
+        {
+          "name": "Crear antecedente",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"usuario\": {\n    \"idUsuario\": 5\n  },\n  \"antecedente\": \"Alergia a la penicilina\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/antecedentes",
+              "host": ["{{base_url}}"],
+              "path": ["api", "antecedentes"]
+            },
+            "description": "Crea un nuevo antecedente médico para un usuario"
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "usuario_id",
+      "value": "5",
+      "type": "string"
+    },
+    {
+      "key": "medico_id",
+      "value": "5",
+      "type": "string"
+    },
+    {
+      "key": "paciente_id",
+      "value": "3",
+      "type": "string"
+    },
+    {
+      "key": "rol_id",
+      "value": "1",
+      "type": "string"
+    }
+  ]
+}
