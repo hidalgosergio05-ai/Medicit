@@ -96,7 +96,19 @@ export default function GestionMedicaPage() {
 
   return (
     <DashboardLayout title="Gestión Médica">
-      <Card>
+      <div className="space-y-6">
+        {/* Botón de navegación a Especialidades */}
+        <div className="flex gap-4">
+          <Button asChild variant="outline">
+            <Link href="/dashboard/medico/especialidades">
+              <Stethoscope className="mr-2 h-4 w-4" />
+              Gestionar Especialidades de Médicos
+            </Link>
+          </Button>
+        </div>
+
+        {/* Card de Antecedentes */}
+        <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0">
           <div>
             <CardTitle className="flex items-center gap-2">
@@ -160,6 +172,7 @@ export default function GestionMedicaPage() {
         variant="destructive"
         onConfirm={handleDelete}
       />
+      </div>
     </DashboardLayout>
   )
 }

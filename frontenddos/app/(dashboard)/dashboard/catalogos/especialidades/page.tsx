@@ -148,34 +148,37 @@ export default function EspecialidadesPage() {
           </CardHeader>
           <CardContent>
             <DataTable
-              data={especialidades}
+              data={especialidades as unknown as Record<string, unknown>[]}
               columns={columns}
               isLoading={isLoading}
               searchPlaceholder="Buscar especialidad..."
-              actions={(especialidad: Especialidad) => (
-                <div className="flex items-center justify-end gap-2">
-                  {canEdit("modulo_catalogos") && (
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() =>
-                        setFormDialog({
-                          open: true,
-                          especialidad,
-                          nombre: especialidad.nombreEspecialidad,
-                        })
-                      }
-                    >
-                      <Pencil className="h-4 w-4" />
-                    </Button>
-                  )}
-                  {canDelete("modulo_catalogos") && (
-                    <Button variant="ghost" size="icon" onClick={() => setDeleteDialog({ open: true, especialidad })}>
-                      <Trash2 className="h-4 w-4 text-destructive" />
-                    </Button>
-                  )}
-                </div>
-              )}
+              actions={(item: Record<string, unknown>) => {
+                const especialidad = item as unknown as Especialidad
+                return (
+                  <div className="flex items-center justify-end gap-2">
+                    {canEdit("modulo_catalogos") && (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() =>
+                          setFormDialog({
+                            open: true,
+                            especialidad,
+                            nombre: especialidad.nombreEspecialidad,
+                          })
+                        }
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                    )}
+                    {canDelete("modulo_catalogos") && (
+                      <Button variant="ghost" size="icon" onClick={() => setDeleteDialog({ open: true, especialidad })}>
+                        <Trash2 className="h-4 w-4 text-destructive" />
+                      </Button>
+                    )}
+                  </div>
+                )
+              }}
             />
           </CardContent>
         </Card>

@@ -212,14 +212,14 @@ class ApiService {
   async crearEspecialidad(nombreEspecialidad: string): Promise<Especialidad> {
     return this.request<Especialidad>("/especialidades", {
       method: "POST",
-      body: JSON.stringify({ nombreEspecialidad }),
+      body: JSON.stringify({ nombreEspecialidad, descripcion: "ninguno" }),
     })
   }
 
   async actualizarEspecialidad(id: number, nombreEspecialidad: string): Promise<Especialidad> {
     return this.request<Especialidad>(`/especialidades/${id}`, {
       method: "PUT",
-      body: JSON.stringify({ nombreEspecialidad }),
+      body: JSON.stringify({ nombreEspecialidad, descripcion: "ninguno" }),
     })
   }
 

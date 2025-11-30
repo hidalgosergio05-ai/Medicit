@@ -247,7 +247,7 @@ export default function CrearCitaPage() {
                     ) : (
                       medicos.map((medico) => {
                         const espec = medicoEspecialidades.get(medico.idUsuario) || []
-                        const especNombre = espec.length > 0 ? espec[0].nombreEspecialidad : "Sin especialidad"
+                        const especNombre = espec.length > 0 ? espec.map(e => e.nombreEspecialidad).join(", ") : "Sin especialidad"
                         return (
                           <SelectItem key={medico.idUsuario} value={String(medico.idUsuario)}>
                             <div className="flex items-center gap-2">

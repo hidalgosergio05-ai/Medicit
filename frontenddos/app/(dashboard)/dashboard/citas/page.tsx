@@ -40,7 +40,14 @@ export default function CitasPage() {
     action: "aceptar" | "rechazar" | null
   }>({ open: false, cita: null, action: null })
 
-  const getEspecialidadesDelMedico = (idMedico: number): string => {
+  const getEspecialidadesDelMedico = (cita: Cita): string => {
+    // Primero, intenta obtener especialidades desde el objeto anidado
+    if (cita.medico?.especialidades && cita.medico.especialidades.length > 0) {
+      return cita.medico.especialidades.map((e) => e.nombreEspecialidad).join(", ")
+    }
+    
+    // Si no, busca en la lista de usuarios (fallback)
+    const idMedico = cita.idMedico || cita.medico?.idUsuario || 0
     const medico = usuarios.find((u) => u.idUsuario === idMedico)
     if (!medico?.especialidades || medico.especialidades.length === 0) return "Sin especialidad"
     return medico.especialidades.map((e) => e.nombreEspecialidad).join(", ")
@@ -192,7 +199,7 @@ export default function CitasPage() {
       header: "Médico",
       render: (cita: Cita) => {
         const nombreMedico = cita.nombreMedico || `${cita.medico?.nombres} ${cita.medico?.apellidos}`
-        const espec = getEspecialidadesDelMedico(cita.idMedico || 0)
+        const espec = getEspecialidadesDelMedico(cita)
         return `Dr. ${nombreMedico} - ${espec}`
       },
     },
@@ -221,7 +228,7 @@ export default function CitasPage() {
       header: "Médico",
       render: (cita: Cita) => {
         const nombreMedico = cita.nombreMedico || `${cita.medico?.nombres} ${cita.medico?.apellidos}`
-        const espec = getEspecialidadesDelMedico(cita.idMedico || 0)
+        const espec = getEspecialidadesDelMedico(cita)
         return `Dr. ${nombreMedico} - ${espec}`
       },
     },
