@@ -1,26 +1,24 @@
 package sv.medicit.app.Entidades;
 
- 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Table; 
-import jakarta.persistence.FetchType; 
-import jakarta.persistence.OneToMany;
-import java.util.List;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.FetchType;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 /**
- * Entidad JPA que representa la tabla `usuarios`.
- * Esta clase fue adaptada para mapear columnas y permitir que JPA/Hibernate
- * cree/actualice la tabla desde las entidades (ddl-auto=update).
+ * Entidad simplificada que representa los permisos de un rol para un módulo.
+ * 
+ * Tabla: permisos
+ * Una fila por combinación de rol y módulo con acciones booleanas.
  */
 @Entity
 @Table(name = "Permisos")
@@ -34,16 +32,26 @@ public class Permisos {
     @Column(name = "id_permiso")
     private Integer idPermiso;
 
-    @Column(name = "nombre_permiso", length = 30, nullable = false)
-    private String estado;
+    // Relación ManyToOne con Roles
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_rol", referencedColumnName = "id_rol", nullable = false)
+    private Roles rol;
 
-    @Column(name = "descripcion", length = 200, nullable = false)
-    private String descripcion;
+    @Column(name = "modulo", length = 50, nullable = false)
+    private String modulo;
 
-    // Relación inversa - lista de RolPermisoModulo para este permiso
-    @OneToMany(mappedBy = "permiso", fetch = FetchType.LAZY)
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
-    private List<RolPermisoModulo> rolesPermisosModulos;
+    @Column(name = "ver", nullable = false)
+    private Boolean ver = false;
 
+    @Column(name = "crear", nullable = false)
+    private Boolean crear = false;
+
+    @Column(name = "editar", nullable = false)
+    private Boolean editar = false;
+
+    @Column(name = "eliminar", nullable = false)
+    private Boolean eliminar = false;
+
+    @Column(name = "descargar", nullable = false)
+    private Boolean descargar = false;
 }

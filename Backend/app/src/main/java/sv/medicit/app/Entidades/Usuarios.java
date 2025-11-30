@@ -2,7 +2,6 @@ package sv.medicit.app.Entidades;
 
 import java.util.Date;
 import java.util.List;
- 
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -12,13 +11,14 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
-
-
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.JoinTable;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -57,23 +57,30 @@ public class Usuarios {
     @Column(name = "fecha_nacimiento", nullable = false)
     private Date fechaNacimiento;
 
-    //@JsonIgnore
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_rol", referencedColumnName = "id_rol", nullable = false)
     private Roles rol;
 
-    // Relación ManyToOne con Estados. La columna en la tabla usuarios se llama `id_estado` y guarda el id (id_estado)
-     
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_estado", referencedColumnName = "id_estado", nullable = false)
     private Estados estado;
 
     // Relación ManyToMany con Especialidades (lado propietario)
-    @ManyToMany(fetch = FetchType.EAGER) 
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name = "Usuario_especialidad",
         joinColumns = @JoinColumn(name = "id_usuario", referencedColumnName = "id_usuario"),
         inverseJoinColumns = @JoinColumn(name = "id_especialidad", referencedColumnName = "id_especialidad")
     )
     private List<Especialidades> especialidades;
+
+    // Relación OneToMany con Contrasenias
+    @OneToMany(mappedBy = "usuario", fetch = FetchType.LAZY)
+    @JsonIgnore
+    private List<Contrasenias> contrasenias;
+
+    // Relación OneToMany con Correos
+    @OneToMany(mappedBy = "usuario", fetch = FetchType.LAZY)
+    @JsonIgnore
+    private List<Correos> correos;
 }
