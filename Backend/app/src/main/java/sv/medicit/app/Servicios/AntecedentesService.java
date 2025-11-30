@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import sv.medicit.app.DTOs.AntecedenteSimpleDTO;
 import sv.medicit.app.Entidades.Antecedentes;
 import sv.medicit.app.Repositorios.AntecedentesRepository;
 
@@ -76,5 +77,19 @@ public class AntecedentesService {
             throw new RuntimeException("Antecedente no encontrado con ID: " + id);
         }
         antecedentesRepository.deleteById(id);
+    }
+
+    /**
+     * Obtener antecedentes simplificados de un usuario (solo ID y descripción, sin datos del usuario).
+     */
+    public List<AntecedenteSimpleDTO> obtenerAntecedentesSimplePorUsuarioId(Integer idUsuario) {
+        return antecedentesRepository.obtenerAntecedentesSimplePorUsuarioId(idUsuario);
+    }
+
+    /**
+     * Obtener todos los antecedentes de un usuario (con toda la información).
+     */
+    public List<Antecedentes> obtenerPorUsuarioId(Integer idUsuario) {
+        return antecedentesRepository.findByUsuarioIdUsuario(idUsuario);
     }
 }

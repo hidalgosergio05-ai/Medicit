@@ -35,7 +35,7 @@ public class Modulos {
     private Integer idModulo;
 
     @Column(name = "nombre_modulo", length = 30, nullable = false)
-    private String estado;
+    private String nombreModulo;
 
     @Column(name = "descripcion", length = 200, nullable = false)
     private String descripcion;

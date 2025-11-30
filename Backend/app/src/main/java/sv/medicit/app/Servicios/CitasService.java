@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import sv.medicit.app.DTOs.CitaSimpleDTO;
 import sv.medicit.app.Entidades.Citas;
 import sv.medicit.app.Repositorios.CitasRepository;
 
@@ -91,5 +92,21 @@ public class CitasService {
             throw new RuntimeException("Cita no encontrada con ID: " + id);
         }
         citasRepository.deleteById(id);
+    }
+
+    /**
+     * Obtener citas simplificadas de un paciente.
+     * Retorna solo los datos necesarios sin objetos completos de Usuario.
+     */
+    public List<CitaSimpleDTO> obtenerCitasPorPaciente(Integer idPaciente) {
+        return citasRepository.obtenerCitasPacienteSimplificadas(idPaciente);
+    }
+
+    /**
+     * Obtener citas simplificadas de un médico.
+     * Retorna solo los datos necesarios sin objetos completos de Usuario.
+     */
+    public List<CitaSimpleDTO> obtenerCitasPorMedico(Integer idMedico) {
+        return citasRepository.obtenerCitasMedicoSimplificadas(idMedico);
     }
 }

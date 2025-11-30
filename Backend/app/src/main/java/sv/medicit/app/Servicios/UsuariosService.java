@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import sv.medicit.app.DTOs.UsuarioCreacionDTO;
+import sv.medicit.app.DTOs.UsuarioLoginDTO;
 import sv.medicit.app.Entidades.Contrasenias;
 import sv.medicit.app.Entidades.Correos;
 import sv.medicit.app.Entidades.Estados;
@@ -370,5 +371,13 @@ public class UsuariosService {
         } else {
             throw new RuntimeException("Usuario no encontrado con ID: " + id);
         }
+    }
+
+    /**
+     * Obtener usuario con información de login (incluye contraseña).
+     * Se usa para validar credenciales de login.
+     */
+    public Optional<UsuarioLoginDTO> obtenerUsuarioPorLogin(String nombreUsuario) {
+        return usuariosRepository.obtenerUsuarioPorLogin(nombreUsuario);
     }
 }

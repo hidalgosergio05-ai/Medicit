@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import sv.medicit.app.DTOs.UsuarioCreacionDTO;
+import sv.medicit.app.DTOs.UsuarioLoginDTO;
 import sv.medicit.app.Entidades.Usuarios;
 import sv.medicit.app.Servicios.UsuariosService;
 
@@ -233,6 +234,31 @@ public class UsuariosRestController {
 
         public Object getDato() {
             return dato;
+        }
+    }
+
+    /**
+     * POST /api/usuarios/login/{nombreUsuario}
+     * Obtener información del usuario con contraseña para validar login.
+     * El cliente comparará la contraseña proporcionada con la almacenada.
+     */
+    @PostMapping("/login/{nombreUsuario}")
+    public ResponseEntity<?> obtenerUsuarioPorLogin(@PathVariable String nombreUsuario) {
+        try {
+            Optional<UsuarioLoginDTO> usuario = usuariosService.obtenerUsuarioPorLogin(nombreUsuario);
+            if (usuario.isPresent()) {
+                return new ResponseEntity<>(usuario.get(), HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(
+                    new ErrorResponse("No encontrado", "Usuario no encontrado: " + nombreUsuario),
+                    HttpStatus.NOT_FOUND
+                );
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<>(
+                new ErrorResponse("Error", e.getMessage()),
+                HttpStatus.INTERNAL_SERVER_ERROR
+            );
         }
     }
 }

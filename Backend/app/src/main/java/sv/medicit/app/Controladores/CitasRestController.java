@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import sv.medicit.app.DTOs.CitaSimpleDTO;
 import sv.medicit.app.Entidades.Citas;
 import sv.medicit.app.Servicios.CitasService;
 
@@ -156,6 +157,52 @@ public class CitasRestController {
 
         public Object getDato() {
             return dato;
+        }
+    }
+
+    /**
+     * GET /api/citas/paciente/{idPaciente}
+     * Obtener todas las citas de un paciente específico en formato simplificado.
+     */
+    @GetMapping("/paciente/{idPaciente}")
+    public ResponseEntity<?> obtenerCitasPorPaciente(@PathVariable Integer idPaciente) {
+        try {
+            List<CitaSimpleDTO> citas = citasService.obtenerCitasPorPaciente(idPaciente);
+            if (citas.isEmpty()) {
+                return new ResponseEntity<>(
+                    new ErrorResponse("No encontrado", "El paciente no tiene citas registradas"),
+                    HttpStatus.NOT_FOUND
+                );
+            }
+            return new ResponseEntity<>(citas, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(
+                new ErrorResponse("Error", e.getMessage()),
+                HttpStatus.INTERNAL_SERVER_ERROR
+            );
+        }
+    }
+
+    /**
+     * GET /api/citas/medico/{idMedico}
+     * Obtener todas las citas de un médico específico en formato simplificado.
+     */
+    @GetMapping("/medico/{idMedico}")
+    public ResponseEntity<?> obtenerCitasPorMedico(@PathVariable Integer idMedico) {
+        try {
+            List<CitaSimpleDTO> citas = citasService.obtenerCitasPorMedico(idMedico);
+            if (citas.isEmpty()) {
+                return new ResponseEntity<>(
+                    new ErrorResponse("No encontrado", "El médico no tiene citas registradas"),
+                    HttpStatus.NOT_FOUND
+                );
+            }
+            return new ResponseEntity<>(citas, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(
+                new ErrorResponse("Error", e.getMessage()),
+                HttpStatus.INTERNAL_SERVER_ERROR
+            );
         }
     }
 }

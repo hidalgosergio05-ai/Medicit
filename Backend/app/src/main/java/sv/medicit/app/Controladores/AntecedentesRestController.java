@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import sv.medicit.app.DTOs.AntecedenteSimpleDTO;
 import sv.medicit.app.Entidades.Antecedentes;
 import sv.medicit.app.Servicios.AntecedentesService;
 
@@ -109,6 +110,30 @@ public class AntecedentesRestController {
                 new ErrorResponse("Error", e.getMessage()),
                 HttpStatus.NOT_FOUND
             );
+        } catch (Exception e) {
+            return new ResponseEntity<>(
+                new ErrorResponse("Error", e.getMessage()),
+                HttpStatus.INTERNAL_SERVER_ERROR
+            );
+        }
+    }
+
+    /**
+     * GET /api/antecedentes/usuario/{idUsuario}
+     * Obtener los antecedentes de un usuario específico en formato simplificado.
+     * Retorna solo el ID del antecedente y la descripción, sin incluir información del usuario.
+     */
+    @GetMapping("/usuario/{idUsuario}")
+    public ResponseEntity<?> obtenerAntecedentesDelUsuario(@PathVariable Integer idUsuario) {
+        try {
+            List<AntecedenteSimpleDTO> antecedentes = antecedentesService.obtenerAntecedentesSimplePorUsuarioId(idUsuario);
+            if (antecedentes.isEmpty()) {
+                return new ResponseEntity<>(
+                    new ErrorResponse("No encontrado", "El usuario no tiene antecedentes registrados"),
+                    HttpStatus.NOT_FOUND
+                );
+            }
+            return new ResponseEntity<>(antecedentes, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(
                 new ErrorResponse("Error", e.getMessage()),

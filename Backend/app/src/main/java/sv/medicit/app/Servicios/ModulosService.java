@@ -24,7 +24,7 @@ public class ModulosService {
     }
 
     public Modulos crear(Modulos modulo) {
-        if (modulo.getEstado() == null || modulo.getEstado().isEmpty()) {
+        if (modulo.getNombreModulo() == null || modulo.getNombreModulo().isEmpty()) {
             throw new IllegalArgumentException("El nombre del módulo es requerido");
         }
         return modulosRepository.save(modulo);
@@ -35,8 +35,8 @@ public class ModulosService {
         
         if (moduloExistente.isPresent()) {
             Modulos modulo = moduloExistente.get();
-            if (moduloActualizado.getEstado() != null) {
-                modulo.setEstado(moduloActualizado.getEstado());
+            if (moduloActualizado.getNombreModulo() != null) {
+                modulo.setNombreModulo(moduloActualizado.getNombreModulo());
             }
             if (moduloActualizado.getDescripcion() != null) {
                 modulo.setDescripcion(moduloActualizado.getDescripcion());
