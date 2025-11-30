@@ -39,4 +39,8 @@ public class Antecedentes {
     @Lob
     @Column(name = "antecedente", nullable = false, columnDefinition = "LONGTEXT")
     private String antecedente;
+
+    @Lob
+    @Column(name = "descripcion", columnDefinition = "LONGTEXT")
+    private String descripcion;
 }

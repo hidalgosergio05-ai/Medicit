@@ -362,10 +362,14 @@ class ApiService {
     return this.request<Antecedente>(`/antecedentes/${id}`)
   }
 
-  async crearAntecedente(payload: Omit<Antecedente, "idAntecedente" | "paciente">): Promise<Antecedente> {
+  async crearAntecedente(payload: { idPaciente: number; tipo?: string; descripcion: string }): Promise<Antecedente> {
     return this.request<Antecedente>("/antecedentes", {
       method: "POST",
-      body: JSON.stringify(payload),
+      body: JSON.stringify({
+        usuario: { idUsuario: payload.idPaciente },
+        antecedente: payload.tipo,
+        descripcion: payload.descripcion,
+      }),
     })
   }
 

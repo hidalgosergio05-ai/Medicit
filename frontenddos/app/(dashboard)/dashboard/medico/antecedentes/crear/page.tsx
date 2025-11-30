@@ -48,7 +48,11 @@ export default function CrearAntecedentePage() {
     const loadData = async () => {
       try {
         const usuarios = await api.getUsuarios()
-        const pacientesList = usuarios.filter((u) => u.nombreRol.toLowerCase() === "paciente")
+        const pacientesList = usuarios.filter((u) => {
+          // Manejar tanto estructura plana como anidada
+          const rol = typeof u.nombreRol === 'string' ? u.nombreRol : u.rol?.nombreRol || u.nombreRol
+          return rol?.toLowerCase() === "paciente"
+        })
         setPacientes(pacientesList)
 
         if (preselectedPaciente) {

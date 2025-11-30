@@ -45,7 +45,12 @@ export default function GestionMedicaPage() {
     loadData()
   }, [])
 
-  const getPacienteNombre = (idPaciente: number) => {
+  const getPacienteNombre = (antecedente: Antecedente) => {
+    if (antecedente.usuario) {
+      return `${antecedente.usuario.nombres} ${antecedente.usuario.apellidos}`
+    }
+    const idPaciente = antecedente.idPaciente
+    if (!idPaciente) return "Desconocido"
     const paciente = usuarios.find((u) => u.idUsuario === idPaciente)
     return paciente ? `${paciente.nombres} ${paciente.apellidos}` : "Desconocido"
   }
@@ -76,14 +81,16 @@ export default function GestionMedicaPage() {
     {
       key: "paciente",
       header: "Paciente",
-      render: (ant: Antecedente) => getPacienteNombre(ant.idPaciente),
+      render: (ant: Antecedente) => getPacienteNombre(ant),
     },
-    { key: "tipo", header: "Tipo", render: (ant: Antecedente) => ant.tipo || "General" },
+    { key: "antecedente", header: "Tipo", render: (ant: Antecedente) => ant.antecedente || "General" },
     {
       key: "descripcion",
       header: "Descripción",
-      render: (ant: Antecedente) =>
-        ant.descripcion.length > 50 ? `${ant.descripcion.substring(0, 50)}...` : ant.descripcion,
+      render: (ant: Antecedente) => {
+        const desc = ant.descripcion || ""
+        return desc.length > 50 ? `${desc.substring(0, 50)}...` : desc
+      },
     },
   ]
 

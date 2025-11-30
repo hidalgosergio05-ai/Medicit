@@ -105,9 +105,11 @@ export interface Correo {
 
 export interface Antecedente {
   idAntecedente: number
-  descripcion: string
+  antecedente?: string
+  descripcion?: string
   tipo?: string
-  idPaciente: number
+  usuario?: Usuario
+  idPaciente?: number
   paciente?: Usuario
 }
 
